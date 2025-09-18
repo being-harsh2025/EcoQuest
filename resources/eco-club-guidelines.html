@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eco Club Guidelines - EcoQuest</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .guidelines-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .guideline-section {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .guideline-section:hover {
+      transform: translateY(-5px);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #22c55e;
+    }
+
+    .section-icon {
+      font-size: 3rem;
+      margin-right: 20px;
+      color: #22c55e;
+    }
+
+    .section-title {
+      flex: 1;
+    }
+
+    .section-title h2 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .section-title p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .steps-container {
+      display: grid;
+      gap: 20px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 15px;
+      border-left: 5px solid #22c55e;
+      transition: all 0.3s ease;
+    }
+
+    .step:hover {
+      background: #f0fdf4;
+      transform: translateX(5px);
+    }
+
+    .step-number {
+      background: #22c55e;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+
+    .step-content h3 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+    }
+
+    .step-content p {
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .step-details {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .materials-list, .tips-list {
+      list-style: none;
+      margin: 10px 0;
+    }
+
+    .materials-list li, .tips-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+    }
+
+    .materials-list li:before {
+      content: "🛠️";
+      margin-right: 10px;
+    }
+
+    .tips-list li:before {
+      content: "💡";
+      margin-right: 10px;
+    }
+
+    .safety-box {
+      background: #fef3c7;
+      border: 2px solid #f59e0b;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+
+    .safety-box h4 {
+      color: #92400e;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .safety-box h4:before {
+      content: "⚠️";
+      margin-right: 10px;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .timeline:before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #22c55e;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+      padding-left: 60px;
+    }
+
+    .timeline-item:before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 5px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: 3px solid white;
+      box-shadow: 0 0 0 3px #22c55e;
+    }
+
+    .timeline-content {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .print-btn:hover {
+      background: #16a34a;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .guideline-section {
+        padding: 20px;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .section-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+      
+      .print-btn {
+        display: none;
+      }
+      
+      .guideline-section {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">🖨️ Print Guidelines</button>
+  
+  <div class="container">
+    <div class="header">
+      <h1>🌱 Eco Club Guidelines</h1>
+      <p>Complete guides for organizing environmental activities and events</p>
+    </div>
+
+    <div class="guidelines-container">
+      <!-- Tree Planting Guide -->
+      <div class="guideline-section">
+        <div class="section-header">
+          <div class="section-icon">🌳</div>
+          <div class="section-title">
+            <h2>Tree Planting Drive</h2>
+            <p>Step-by-step guide to organize a successful tree planting event</p>
+          </div>
+        </div>
+        
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Planning & Preparation</h3>
+              <p>Choose the right location, season, and tree species for your planting drive.</p>
+              <div class="step-details">
+                <h4>Materials Needed:</h4>
+                <ul class="materials-list">
+                  <li>Native tree saplings (2-3 feet tall)</li>
+                  <li>Shovels and spades</li>
+                  <li>Watering cans or hoses</li>
+                  <li>Mulch or compost</li>
+                  <li>Stakes and ties for support</li>
+                  <li>Gloves for participants</li>
+                </ul>
+                <div class="safety-box">
+                  <h4>Safety Tips</h4>
+                  <p>Check weather conditions, ensure proper hydration, and have a first aid kit available.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Site Selection</h3>
+              <p>Choose appropriate locations with proper soil, sunlight, and space for tree growth.</p>
+              <div class="step-details">
+                <h4>Location Criteria:</h4>
+                <ul class="tips-list">
+                  <li>Well-draining soil with good nutrients</li>
+                  <li>Adequate sunlight (6+ hours daily)</li>
+                  <li>Sufficient space for mature tree size</li>
+                  <li>Away from power lines and buildings</li>
+                  <li>Permission from landowners/authorities</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Planting Process</h3>
+              <p>Follow proper techniques to ensure tree survival and healthy growth.</p>
+              <div class="step-details">
+                <div class="timeline">
+                  <div class="timeline-item">
+                    <div class="timeline-content">
+                      <h4>Dig the Hole</h4>
+                      <p>Make hole twice as wide as root ball, same depth as container</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-content">
+                      <h4>Prepare the Sapling</h4>
+                      <p>Remove container, loosen roots gently, inspect for damage</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-content">
+                      <h4>Plant & Backfill</h4>
+                      <p>Place tree, fill with soil, water thoroughly, add mulch</p>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-content">
+                      <h4>Support & Care</h4>
+                      <p>Stake if needed, create watering schedule, monitor growth</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clean-up Drive Guide -->
+      <div class="guideline-section">
+        <div class="section-header">
+          <div class="section-icon">🧹</div>
+          <div class="section-title">
+            <h2>Community Clean-up Drive</h2>
+            <p>Organize effective waste collection and area beautification events</p>
+          </div>
+        </div>
+        
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Event Planning</h3>
+              <p>Coordinate with local authorities and gather volunteers for the clean-up drive.</p>
+              <div class="step-details">
+                <h4>Pre-Event Checklist:</h4>
+                <ul class="materials-list">
+                  <li>Garbage bags (different colors for sorting)</li>
+                  <li>Gloves, masks, and safety vests</li>
+                  <li>Pickup tools (grabbers, brooms)</li>
+                  <li>First aid kit and water bottles</li>
+                  <li>Weighing scale for waste measurement</li>
+                  <li>Camera for before/after photos</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Area Assessment</h3>
+              <p>Survey the cleanup area and identify types of waste and safety hazards.</p>
+              <div class="step-details">
+                <h4>Assessment Points:</h4>
+                <ul class="tips-list">
+                  <li>Map the area and divide into sections</li>
+                  <li>Identify hazardous materials (glass, chemicals)</li>
+                  <li>Note recyclable vs. non-recyclable waste</li>
+                  <li>Check accessibility for waste collection vehicles</li>
+                  <li>Plan safe routes and meeting points</li>
+                </ul>
+                <div class="safety-box">
+                  <h4>Safety Precautions</h4>
+                  <p>Never handle unknown chemicals, sharp objects, or medical waste. Report hazardous materials to authorities.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Execution & Follow-up</h3>
+              <p>Conduct the cleanup systematically and ensure proper waste disposal.</p>
+              <div class="step-details">
+                <h4>During the Event:</h4>
+                <ul class="tips-list">
+                  <li>Brief volunteers on safety and procedures</li>
+                  <li>Assign team leaders for each section</li>
+                  <li>Sort waste into recyclables and non-recyclables</li>
+                  <li>Document progress with photos and measurements</li>
+                  <li>Coordinate with waste management services</li>
+                </ul>
+                <h4>Post-Event:</h4>
+                <ul class="tips-list">
+                  <li>Calculate total waste collected</li>
+                  <li>Share results with community and media</li>
+                  <li>Plan regular maintenance schedules</li>
+                  <li>Recognize volunteer contributions</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eco Event Organization -->
+      <div class="guideline-section">
+        <div class="section-header">
+          <div class="section-icon">🎯</div>
+          <div class="section-title">
+            <h2>Organizing Eco Events</h2>
+            <p>Guidelines for hosting environmental awareness and action events</p>
+          </div>
+        </div>
+        
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Event Types & Themes</h3>
+              <p>Choose from various environmental event formats based on your goals and audience.</p>
+              <div class="step-details">
+                <h4>Popular Event Ideas:</h4>
+                <ul class="tips-list">
+                  <li>Earth Day celebrations and awareness campaigns</li>
+                  <li>Recycling drives and upcycling workshops</li>
+                  <li>Environmental film screenings and discussions</li>
+                  <li>Green technology exhibitions and demos</li>
+                  <li>Nature walks and biodiversity surveys</li>
+                  <li>Sustainable living workshops and demos</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Logistics & Resources</h3>
+              <p>Plan venue, materials, speakers, and promotional activities for your event.</p>
+              <div class="step-details">
+                <h4>Resource Planning:</h4>
+                <ul class="materials-list">
+                  <li>Venue booking and setup requirements</li>
+                  <li>Audio-visual equipment for presentations</li>
+                  <li>Educational materials and handouts</li>
+                  <li>Registration and feedback systems</li>
+                  <li>Refreshments (preferably eco-friendly)</li>
+                  <li>Transportation arrangements if needed</li>
+                </ul>
+                <h4>Promotion Strategy:</h4>
+                <ul class="tips-list">
+                  <li>Social media campaigns with hashtags</li>
+                  <li>School/community bulletin boards</li>
+                  <li>Local newspaper and radio announcements</li>
+                  <li>Partner with environmental organizations</li>
+                  <li>Create attractive flyers and posters</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Impact Measurement</h3>
+              <p>Track and evaluate the success and environmental impact of your event.</p>
+              <div class="step-details">
+                <h4>Success Metrics:</h4>
+                <ul class="tips-list">
+                  <li>Number of participants and engagement level</li>
+                  <li>Amount of waste collected or materials recycled</li>
+                  <li>Pledges made for environmental actions</li>
+                  <li>Media coverage and social media reach</li>
+                  <li>Follow-up actions taken by participants</li>
+                  <li>Partnerships formed with other organizations</li>
+                </ul>
+                <div class="safety-box">
+                  <h4>Sustainability Tip</h4>
+                  <p>Make your event carbon-neutral by using renewable energy, minimizing waste, and offsetting transportation emissions.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

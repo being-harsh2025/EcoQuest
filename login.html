@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoQuest | Sign in / Sign up</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <div class="logo"></div>
+        <div class="title">EcoQuest</div>
+      </a>
+      <div class="nav-links">
+        <a class="btn ghost" href="leaderboard.html">Leaderboard</a>
+        <a class="btn ghost" href="quiz.html">Quizzes</a>
+        <a class="btn ghost" href="challenges.html">Challenges</a>
+        <a class="btn ghost" href="game.html">Mini Game</a>
+        <a class="btn ghost" href="certificate.html">Certificate</a>
+        <div id="authButtons" class="nav-links" style="display:none"></div>
+        <div id="navUser" class="userbar" style="display:none">
+          <img alt="avatar" src=""/>
+          <span></span>
+          <button id="logoutBtn" class="btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <img src="logo.svg" alt="EcoQuest Logo" class="auth-logo">
+        <h2 id="auth-title">Welcome to EcoQuest</h2>
+        <p id="auth-subtitle">Sign in to continue your eco journey</p>
+      </div>
+
+      <div class="auth-toggle-buttons">
+        <button id="show-login" class="active">Login</button>
+        <button id="show-signup">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" required>
+          <span class="password-toggle">👁️</span>
+        </div>
+        <div class="form-group captcha-group">
+          <label for="captcha-answer">Security Check</label>
+          <div class="captcha-container">
+            <span id="captcha-question" class="captcha-question"></span>
+            <input type="number" id="captcha-answer" placeholder="Enter answer" required>
+            <button type="button" id="refresh-captcha" class="captcha-refresh">🔄</button>
+          </div>
+        </div>
+        <a href="#" class="forgot-password">Forgot your password?</a>
+        <button type="submit" class="btn primary auth-btn">Continue</button>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form id="signup-form" class="auth-form" style="display: none;">
+        <div class="form-group">
+          <label for="signup-email">Email Address</label>
+          <input type="email" id="signup-email" placeholder="your@email.com" required>
+          <small id="email-feedback" style="color: #dc2626; font-size: 12px; margin-top: 4px; display: none;">
+            Please use a valid email from providers like Gmail, Yahoo, Outlook, or educational institutions
+          </small>
+        </div>
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label for="signup-school">School/College</label>
+          <input type="text" id="signup-school" placeholder="Your institution name" required>
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" placeholder="••••••••" required>
+          <span class="password-toggle">👁️</span>
+          <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">
+            Must be at least 8 characters with uppercase, lowercase, and number
+          </small>
+        </div>
+        <div class="form-group">
+          <label for="signup-confirm-password">Confirm Password</label>
+          <input type="password" id="signup-confirm-password" placeholder="••••••••" required>
+          <span class="password-toggle">👁️</span>
+        </div>
+        <div class="form-group captcha-group">
+          <label for="signup-captcha-answer">Security Check</label>
+          <div class="captcha-container">
+            <span id="signup-captcha-question" class="captcha-question"></span>
+            <input type="number" id="signup-captcha-answer" placeholder="Enter answer" required>
+            <button type="button" id="signup-refresh-captcha" class="captcha-refresh">🔄</button>
+          </div>
+        </div>
+        <button type="submit" class="btn primary auth-btn">Create Account</button>
+      </form>
+
+      <div class="auth-divider">
+        <span>or continue with</span>
+      </div>
+
+      <div class="social-login">
+        <div id="g_id_onload"
+             data-client_id=""
+             data-context="signin"
+             data-ux_mode="popup"
+             data-callback="handleGoogleSignIn"
+             data-auto_prompt="false">
+        </div>
+        
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="continue_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
+        
+        <button class="btn social-btn facebook-btn" disabled style="opacity: 0.5;">Continue with Facebook (Coming Soon)</button>
+      </div>
+
+      <div class="auth-footer">
+        <a href="index.html" class="back-to-home">Back to Home</a>
+      </div>
+    </div>
+  </main>
+
+  <style>
+    .captcha-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+    }
+    
+    .captcha-question {
+      background: #f0f9ff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      color: #0369a1;
+      min-width: 120px;
+      text-align: center;
+      border: 1px solid #bae6fd;
+    }
+    
+    .captcha-container input {
+      flex: 1;
+      max-width: 100px;
+    }
+    
+    .captcha-refresh {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s;
+    }
+    
+    .captcha-refresh:hover {
+      background: #16a34a;
+    }
+    
+    .captcha-group {
+      margin-bottom: 1rem;
+    }
+  </style>
+
+  <!-- Google Sign-In API -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    function validateEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    function validateName(name){ return /^[A-Za-z][A-Za-z\s'.-]{1,48}$/.test(name); }
+    function validateSchool(s){ return /^[A-Za-z0-9][A-Za-z0-9\s'.&()-]{2,80}$/.test(s); }
+    function validatePassword(password) {
+      // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
+      return password.length >= 8 && 
+             /[A-Z]/.test(password) && 
+             /[a-z]/.test(password) && 
+             /\d/.test(password);
+    }
+    
+    // Strict email domain validation - only allow real domains
+    function isValidEmailDomain(email) {
+      const validDomains = [
+        // Major email providers
+        'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'live.com',
+        'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com',
+        'yandex.com', 'mail.com', 'zoho.com', 'tutanota.com',
+        // Educational domains
+        'edu', '.edu', 'ac.uk', 'ac.in', 'edu.au', 'edu.sg', 'edu.my',
+        // Organization domains
+        'org', 'gov', 'mil', 'int',
+        // Common business domains
+        'company.com', 'corp.com', 'business.com'
+      ];
+      
+      const domain = email.split('@')[1];
+      if (!domain) return false;
+      
+      // Check against whitelist of valid domains
+      const isValidDomain = validDomains.some(validDomain => {
+        if (validDomain.startsWith('.')) {
+          return domain.endsWith(validDomain);
+        }
+        return domain === validDomain || domain.endsWith('.' + validDomain);
+      });
+      
+      // Additional check: domain must have proper structure and real TLD
+      const realTLDs = ['com', 'org', 'net', 'edu', 'gov', 'mil', 'int', 'co', 'uk', 'in', 'au', 'ca', 'de', 'fr', 'jp', 'cn', 'br', 'ru', 'it', 'es', 'nl', 'se', 'no', 'dk', 'fi', 'pl', 'cz', 'hu', 'ro', 'bg', 'hr', 'si', 'sk', 'lt', 'lv', 'ee', 'ie', 'pt', 'gr', 'cy', 'mt', 'lu', 'be', 'at', 'ch', 'li', 'is', 'fo', 'gl', 'ad', 'mc', 'sm', 'va'];
+      const tld = domain.split('.').pop();
+      const hasRealTLD = realTLDs.includes(tld);
+      
+      // Domain must not be obviously fake (no numbers as main domain)
+      const domainParts = domain.split('.');
+      const mainDomain = domainParts[domainParts.length - 2];
+      const isNotFake = mainDomain && !/^\d+$/.test(mainDomain);
+      
+      return isValidDomain && hasRealTLD && isNotFake;
+    }
+
+    // Captcha functionality
+    let loginCaptchaAnswer = 0;
+    let signupCaptchaAnswer = 0;
+
+    function generateCaptcha() {
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      const operators = ['+', '-', '*'];
+      const operator = operators[Math.floor(Math.random() * operators.length)];
+      
+      let answer;
+      let question;
+      
+      switch(operator) {
+        case '+':
+          answer = num1 + num2;
+          question = `${num1} + ${num2} = ?`;
+          break;
+        case '-':
+          // Ensure positive result
+          const larger = Math.max(num1, num2);
+          const smaller = Math.min(num1, num2);
+          answer = larger - smaller;
+          question = `${larger} - ${smaller} = ?`;
+          break;
+        case '*':
+          // Use smaller numbers for multiplication
+          const small1 = Math.floor(Math.random() * 5) + 1;
+          const small2 = Math.floor(Math.random() * 5) + 1;
+          answer = small1 * small2;
+          question = `${small1} × ${small2} = ?`;
+          break;
+      }
+      
+      return { question, answer };
+    }
+
+    function refreshLoginCaptcha() {
+      const captcha = generateCaptcha();
+      document.getElementById('captcha-question').textContent = captcha.question;
+      loginCaptchaAnswer = captcha.answer;
+      document.getElementById('captcha-answer').value = '';
+    }
+
+    function refreshSignupCaptcha() {
+      const captcha = generateCaptcha();
+      document.getElementById('signup-captcha-question').textContent = captcha.question;
+      signupCaptchaAnswer = captcha.answer;
+      document.getElementById('signup-captcha-answer').value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const showLogin = document.getElementById('show-login');
+      const showSignup = document.getElementById('show-signup');
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const authTitle = document.getElementById('auth-title');
+      const authSubtitle = document.getElementById('auth-subtitle');
+
+      // Initialize captchas
+      refreshLoginCaptcha();
+      refreshSignupCaptcha();
+
+      // Real-time email validation
+      const signupEmailInput = document.getElementById('signup-email');
+      const emailFeedback = document.getElementById('email-feedback');
+      
+      signupEmailInput.addEventListener('input', (e) => {
+        const email = e.target.value.trim().toLowerCase();
+        if (email && validateEmail(email)) {
+          if (!isValidEmailDomain(email)) {
+            emailFeedback.style.display = 'block';
+            emailFeedback.style.color = '#dc2626';
+            e.target.style.borderColor = '#dc2626';
+          } else {
+            emailFeedback.style.display = 'none';
+            e.target.style.borderColor = '#22c55e';
+          }
+        } else if (email) {
+          emailFeedback.style.display = 'block';
+          emailFeedback.textContent = 'Please enter a valid email format';
+          emailFeedback.style.color = '#dc2626';
+          e.target.style.borderColor = '#dc2626';
+        } else {
+          emailFeedback.style.display = 'none';
+          e.target.style.borderColor = '';
+        }
+      });
+
+      // Captcha refresh button event listeners
+      document.getElementById('refresh-captcha').addEventListener('click', refreshLoginCaptcha);
+      document.getElementById('signup-refresh-captcha').addEventListener('click', refreshSignupCaptcha);
+
+      // Toggle between login and signup forms
+      showLogin.addEventListener('click', () => {
+        showLogin.classList.add('active');
+        showSignup.classList.remove('active');
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+        authTitle.textContent = 'Welcome to EcoQuest';
+        authSubtitle.textContent = 'Sign in to continue your eco journey';
+        refreshLoginCaptcha();
+      });
+
+      showSignup.addEventListener('click', () => {
+        showSignup.classList.add('active');
+        showLogin.classList.remove('active');
+        signupForm.style.display = 'block';
+        loginForm.style.display = 'none';
+        authTitle.textContent = 'Join EcoQuest';
+        authSubtitle.textContent = 'Create your account and start making a difference';
+        refreshSignupCaptcha();
+      });
+
+      // Password toggle functionality
+      document.querySelectorAll('.password-toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const input = toggle.previousElementSibling;
+          if (input.type === 'password') {
+            input.type = 'text';
+            toggle.textContent = '🙈';
+          } else {
+            input.type = 'password';
+            toggle.textContent = '👁️';
+          }
+        });
+      });
+
+      // Handle login form submission
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim().toLowerCase();
+        const password = document.getElementById('login-password').value;
+        const captchaInput = parseInt(document.getElementById('captcha-answer').value);
+        
+        if (!validateEmail(email)) {
+          alert('Please enter a valid email address.');
+          return;
+        }
+
+        if (!password) {
+          alert('Please enter your password.');
+          return;
+        }
+
+        if (captchaInput !== loginCaptchaAnswer) {
+          alert('Incorrect security answer. Please try again.');
+          refreshLoginCaptcha();
+          return;
+        }
+
+        const user = Eco.findUser(email);
+        if (user && user.password === password) {
+          Eco.setCurrentEmail(email);
+          Eco.grantDailyLoginIfEligible(user);
+          const redirect = new URLSearchParams(location.search).get('redirect') || 'dashboard.html';
+          window.location.href = redirect;
+        } else {
+          alert('Invalid email or password. Please check your credentials and try again.');
+        }
+      });
+
+      // Handle signup form submission
+      signupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('signup-email').value.trim().toLowerCase();
+        const name = document.getElementById('signup-name').value.trim();
+        const school = document.getElementById('signup-school').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
+        const captchaInput = parseInt(document.getElementById('signup-captcha-answer').value);
+
+        const errors = [];
+        if (!validateEmail(email)) errors.push('Enter a valid email address.');
+        if (!isValidEmailDomain(email)) errors.push('Please use a valid email domain.');
+        if (!validateName(name)) errors.push('Enter a valid full name (2-50 characters, letters only).');
+        if (!validateSchool(school)) errors.push('Enter a valid school/college name.');
+        if (!validatePassword(password)) errors.push('Password must be at least 8 characters with uppercase, lowercase, and number.');
+        if (password !== confirmPassword) errors.push('Passwords do not match.');
+        
+        if (errors.length) {
+          alert(errors.join('\n'));
+          return;
+        }
+
+        if (captchaInput !== signupCaptchaAnswer) {
+          alert('Incorrect security answer. Please try again.');
+          refreshSignupCaptcha();
+          return;
+        }
+
+        if (Eco.findUser(email)) {
+          alert('An account with this email already exists. Please sign in instead.');
+          return;
+        }
+
+        let user = {
+          email,
+          name,
+          school,
+          password, // Store password for authentication
+          points: 0,
+          badges: [],
+          tasksCompleted: {},
+          avatarDataUrl: Eco.initialsAvatar(name),
+          createdAt: new Date().toISOString()
+        };
+
+        Eco.upsertUser(user);
+        Eco.setCurrentEmail(email);
+        Eco.grantDailyLoginIfEligible(user);
+        alert('Account created successfully! Welcome to EcoQuest.');
+        const redirect = new URLSearchParams(location.search).get('redirect') || 'dashboard.html';
+        window.location.href = redirect;
+      });
+
+      // Google Sign-In Configuration
+      window.handleGoogleSignIn = function(response) {
+        try {
+          if (!response || !response.credential) {
+            console.error('No credential received from Google');
+            alert('Authentication failed. Please try again.');
+            return;
+          }
+
+          // Decode the JWT token from Google
+          const payload = JSON.parse(atob(response.credential.split('.')[1]));
+          console.log('Google user data:', payload);
+          
+          const googleUser = {
+            email: payload.email,
+            name: payload.name,
+            picture: payload.picture,
+            verified: payload.email_verified
+          };
+
+          if (!googleUser.verified) {
+            alert('Please use a verified Google account.');
+            return;
+          }
+
+          // Check if user already exists
+          let existingUser = Eco.findUser(googleUser.email);
+          
+          if (existingUser) {
+            // User exists, log them in
+            Eco.setCurrentEmail(googleUser.email);
+            Eco.grantDailyLoginIfEligible(existingUser);
+            console.log('Existing user logged in:', googleUser.email);
+          } else {
+            // Create new user with Google data
+            const newUser = {
+              email: googleUser.email,
+              name: googleUser.name,
+              school: 'Not specified', // Can be updated later
+              password: 'google_oauth', // Special marker for OAuth users
+              points: 0,
+              badges: [],
+              tasksCompleted: {},
+              avatarDataUrl: googleUser.picture || Eco.initialsAvatar(googleUser.name),
+              createdAt: new Date().toISOString(),
+              authProvider: 'google'
+            };
+            
+            Eco.upsertUser(newUser);
+            Eco.setCurrentEmail(googleUser.email);
+            Eco.grantDailyLoginIfEligible(newUser);
+            console.log('New user created:', googleUser.email);
+          }
+
+          const redirect = new URLSearchParams(location.search).get('redirect') || 'dashboard.html';
+          window.location.href = redirect;
+          
+        } catch (error) {
+          console.error('Google Sign-In error:', error);
+          alert('Authentication error: ' + error.message);
+        }
+      };
+
+      // Initialize Google Sign-In when page loads
+      window.addEventListener('load', function() {
+        // Set the client ID from config
+        const clientId = window.GOOGLE_CONFIG?.CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID';
+        document.getElementById('g_id_onload').setAttribute('data-client_id', clientId);
+        
+        if (typeof google !== 'undefined' && google.accounts) {
+          google.accounts.id.initialize({
+            client_id: clientId,
+            callback: handleGoogleSignIn,
+            auto_select: false,
+            cancel_on_tap_outside: true
+          });
+          
+          // Render the button
+          google.accounts.id.renderButton(
+            document.querySelector('.g_id_signin'),
+            {
+              type: 'standard',
+              shape: 'rectangular',
+              theme: 'outline',
+              text: 'continue_with',
+              size: 'large',
+              logo_alignment: 'left'
+            }
+          );
+        }
+      });
+    });
+  </script>
+</body>
+
+
+</html>

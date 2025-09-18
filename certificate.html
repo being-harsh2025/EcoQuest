@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoQuest | Certificate</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <div class="logo"></div>
+        <div class="title">EcoQuest</div>
+      </a>
+      <div class="nav-links">
+        <a class="btn ghost" href="leaderboard.html">Leaderboard</a>
+        <a class="btn ghost" href="quiz.html">Quizzes</a>
+        <a class="btn ghost" href="challenges.html">Challenges</a>
+        <a class="btn ghost" href="game.html">Mini Game</a>
+        <a class="btn ghost" href="certificate.html">Certificate</a>
+        <div id="authButtons" class="nav-links" style="display:none"></div>
+        <div id="navUser" class="userbar" style="display:none">
+          <img alt="avatar" src=""/>
+          <span></span>
+          <button id="logoutBtn" class="btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:20px;">
+    <div class="grid">
+      <div class="card">
+        <h2>🏆 Official Environmental Education Certificate</h2>
+        <p style="color: #666; margin-bottom: 20px;">Government recognized certificate for environmental education achievements</p>
+        <canvas id="cert" width="1000" height="700" style="width:100%; border:2px solid #1e40af; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></canvas>
+        <div class="nav-links" style="margin-top:15px;">
+          <button id="downloadBtn" class="btn primary">📥 Download Certificate</button>
+          <label class="btn">📷 Upload Student Photo<input type="file" id="photo" accept="image/*" style="display:none"></label>
+        </div>
+        <div class="notice" id="lockMsg" style="margin-top:12px; display:none;">
+          <strong>🔒 Certificate Locked:</strong> Earn 500 Eco-Points to unlock your official certificate.
+        </div>
+      </div>
+      <div class="card">
+        <h3>Badge Status</h3>
+        <ul id="badgeList"></ul>
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    const user = Eco.requireAuth();
+    const canvas = document.getElementById('cert');
+    const ctx = canvas.getContext('2d');
+
+    function draw(bgImg) {
+      // Background with official cream color
+      ctx.fillStyle = '#fefdf8'; 
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Decorative border pattern
+      ctx.strokeStyle = '#1e40af';
+      ctx.lineWidth = 8;
+      ctx.strokeRect(20, 20, canvas.width-40, canvas.height-40);
+      
+      // Inner decorative border
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(35, 35, canvas.width-70, canvas.height-70);
+      
+      // Corner decorations
+      drawCornerDecorations(ctx);
+      
+      // Official header with emblem area
+      ctx.fillStyle = '#1e40af';
+      ctx.font = 'bold 28px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('GOVERNMENT OF INDIA', canvas.width/2, 80);
+      
+      ctx.font = '20px serif';
+      ctx.fillText('MINISTRY OF EDUCATION', canvas.width/2, 105);
+      
+      // School authority section
+      ctx.font = 'bold 24px serif';
+      ctx.fillStyle = '#1e3a8a';
+      ctx.fillText('ENVIRONMENTAL EDUCATION CERTIFICATION', canvas.width/2, 140);
+      
+      // Certificate title
+      ctx.font = 'bold 36px serif';
+      ctx.fillStyle = '#dc2626';
+      ctx.fillText('CERTIFICATE OF ACHIEVEMENT', canvas.width/2, 190);
+      
+      // Decorative line under title
+      ctx.strokeStyle = '#dc2626';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width/2 - 200, 200);
+      ctx.lineTo(canvas.width/2 + 200, 200);
+      ctx.stroke();
+      
+      // Certificate body text
+      ctx.fillStyle = '#1f2937';
+      ctx.font = '22px serif';
+      ctx.fillText('This is to certify that', canvas.width/2, 240);
+      
+      // Student name with underline
+      ctx.font = 'bold 38px serif';
+      ctx.fillStyle = '#1e40af';
+      const studentName = user.name || user.email;
+      ctx.fillText(studentName, canvas.width/2, 290);
+      
+      // Underline for name
+      const nameWidth = ctx.measureText(studentName).width;
+      ctx.strokeStyle = '#1e40af';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width/2 - nameWidth/2, 300);
+      ctx.lineTo(canvas.width/2 + nameWidth/2, 300);
+      ctx.stroke();
+      
+      // School information
+      ctx.fillStyle = '#374151';
+      ctx.font = '20px serif';
+      ctx.fillText('of ' + (user.school || 'Educational Institution'), canvas.width/2, 330);
+      
+      // Achievement description
+      ctx.font = '22px serif';
+      ctx.fillStyle = '#1f2937';
+      ctx.fillText('has successfully completed the Environmental Education Program', canvas.width/2, 370);
+      ctx.fillText('and demonstrated exceptional commitment to environmental conservation', canvas.width/2, 400);
+      
+      // Performance metrics in a box
+      drawPerformanceBox(ctx, user);
+      
+      // Student photo with official frame
+      if (bgImg) {
+        drawOfficialPhoto(ctx, bgImg);
+      }
+      
+      // Official seals and signatures
+      drawOfficialSeals(ctx);
+      
+      // Date and certificate number
+      ctx.fillStyle = '#374151';
+      ctx.font = '16px serif';
+      ctx.textAlign = 'left';
+      const certDate = new Date().toLocaleDateString('en-IN', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      });
+      ctx.fillText('Date of Issue: ' + certDate, 60, canvas.height - 80);
+      
+      ctx.textAlign = 'right';
+      const certNumber = 'ECO/' + new Date().getFullYear() + '/' + String(user.points).padStart(4, '0');
+      ctx.fillText('Certificate No: ' + certNumber, canvas.width - 60, canvas.height - 80);
+      
+      // Specimen watermark if not qualified
+      if (user.points < Eco.RULES.certificateThreshold) {
+        drawSpecimenWatermarks(ctx);
+      }
+    }
+    
+    function drawCornerDecorations(ctx) {
+      const cornerSize = 40;
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 3;
+      
+      // Top-left corner
+      ctx.beginPath();
+      ctx.moveTo(50, 50 + cornerSize);
+      ctx.lineTo(50, 50);
+      ctx.lineTo(50 + cornerSize, 50);
+      ctx.stroke();
+      
+      // Top-right corner
+      ctx.beginPath();
+      ctx.moveTo(canvas.width - 50 - cornerSize, 50);
+      ctx.lineTo(canvas.width - 50, 50);
+      ctx.lineTo(canvas.width - 50, 50 + cornerSize);
+      ctx.stroke();
+      
+      // Bottom-left corner
+      ctx.beginPath();
+      ctx.moveTo(50, canvas.height - 50 - cornerSize);
+      ctx.lineTo(50, canvas.height - 50);
+      ctx.lineTo(50 + cornerSize, canvas.height - 50);
+      ctx.stroke();
+      
+      // Bottom-right corner
+      ctx.beginPath();
+      ctx.moveTo(canvas.width - 50 - cornerSize, canvas.height - 50);
+      ctx.lineTo(canvas.width - 50, canvas.height - 50);
+      ctx.lineTo(canvas.width - 50, canvas.height - 50 - cornerSize);
+      ctx.stroke();
+    }
+    
+    function drawPerformanceBox(ctx, user) {
+      const boxX = 150;
+      const boxY = 430;
+      const boxWidth = canvas.width - 300;
+      const boxHeight = 80;
+      
+      // Box background
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+      
+      // Box border
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+      
+      // Performance details
+      ctx.fillStyle = '#1e40af';
+      ctx.font = 'bold 18px serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('PERFORMANCE SUMMARY', boxX + 20, boxY + 25);
+      
+      ctx.font = '16px serif';
+      ctx.fillStyle = '#374151';
+      ctx.fillText('Eco-Points Earned: ' + (user.points || 0), boxX + 20, boxY + 45);
+      ctx.fillText('Badges Achieved: ' + ((user.badges || []).length || 0), boxX + 250, boxY + 45);
+      ctx.fillText('Environmental Activities: ' + ((user.badges || []).join(', ') || 'In Progress'), boxX + 20, boxY + 65);
+    }
+    
+    function drawOfficialPhoto(ctx, bgImg) {
+      const photoSize = 120;
+      const photoX = canvas.width - 180;
+      const photoY = 250;
+      
+      // Photo frame
+      ctx.fillStyle = '#1e40af';
+      ctx.fillRect(photoX - 5, photoY - 5, photoSize + 10, photoSize + 10);
+      
+      // Photo
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(photoX, photoY, photoSize, photoSize);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(bgImg, photoX, photoY, photoSize, photoSize);
+      ctx.restore();
+      
+      // Photo label
+      ctx.fillStyle = '#374151';
+      ctx.font = '12px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('STUDENT PHOTO', photoX + photoSize/2, photoY + photoSize + 15);
+    }
+    
+    function drawOfficialSeals(ctx) {
+      // Left seal (School)
+      drawSeal(ctx, 150, canvas.height - 180, 'SCHOOL\nSEAL', '#1e40af');
+      
+      // Right seal (Education Department)
+      drawSeal(ctx, canvas.width - 150, canvas.height - 180, 'EDUCATION\nDEPT.', '#dc2626');
+      
+      // Signature lines
+      ctx.strokeStyle = '#374151';
+      ctx.lineWidth = 1;
+      
+      // Principal signature
+      ctx.beginPath();
+      ctx.moveTo(300, canvas.height - 120);
+      ctx.lineTo(450, canvas.height - 120);
+      ctx.stroke();
+      
+      ctx.fillStyle = '#374151';
+      ctx.font = '14px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Principal/Head of Institution', 375, canvas.height - 105);
+      
+      // Education Officer signature
+      ctx.beginPath();
+      ctx.moveTo(550, canvas.height - 120);
+      ctx.lineTo(700, canvas.height - 120);
+      ctx.fillText('Education Officer', 625, canvas.height - 105);
+    }
+    
+    function drawSeal(ctx, x, y, text, color) {
+      const radius = 40;
+      
+      // Outer circle
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // Inner circle
+      ctx.beginPath();
+      ctx.arc(x, y, radius - 8, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // Seal text
+      ctx.fillStyle = color;
+      ctx.font = 'bold 12px serif';
+      ctx.textAlign = 'center';
+      const lines = text.split('\n');
+      lines.forEach((line, index) => {
+        ctx.fillText(line, x, y - 5 + (index * 15));
+      });
+    }
+    
+    function drawSpecimenWatermarks(ctx) {
+      ctx.save();
+      
+      // Main central specimen watermark
+      ctx.translate(canvas.width/2, canvas.height/2);
+      ctx.rotate(-Math.PI/6);
+      ctx.font = 'bold 120px Arial';
+      ctx.fillStyle = 'rgba(220, 38, 38, 0.15)';
+      ctx.strokeStyle = 'rgba(220, 38, 38, 0.3)';
+      ctx.lineWidth = 3;
+      ctx.textAlign = 'center';
+      ctx.strokeText('SPECIMEN', 0, 0);
+      ctx.fillText('SPECIMEN', 0, 0);
+      ctx.restore();
+      
+      // Additional smaller specimen watermarks
+      const positions = [
+        {x: canvas.width * 0.2, y: canvas.height * 0.3, rotation: Math.PI/8},
+        {x: canvas.width * 0.8, y: canvas.height * 0.7, rotation: -Math.PI/8},
+        {x: canvas.width * 0.15, y: canvas.height * 0.7, rotation: Math.PI/4},
+        {x: canvas.width * 0.85, y: canvas.height * 0.3, rotation: -Math.PI/4}
+      ];
+      
+      positions.forEach(pos => {
+        ctx.save();
+        ctx.translate(pos.x, pos.y);
+        ctx.rotate(pos.rotation);
+        ctx.font = 'bold 60px Arial';
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.08)';
+        ctx.strokeStyle = 'rgba(220, 38, 38, 0.15)';
+        ctx.lineWidth = 2;
+        ctx.textAlign = 'center';
+        ctx.strokeText('SPECIMEN', 0, 0);
+        ctx.fillText('SPECIMEN', 0, 0);
+        ctx.restore();
+      });
+      
+      // Border specimen text
+      ctx.save();
+      ctx.font = 'bold 24px Arial';
+      ctx.fillStyle = 'rgba(220, 38, 38, 0.2)';
+      ctx.textAlign = 'center';
+      
+      // Top border
+      for (let i = 0; i < 3; i++) {
+        ctx.fillText('SPECIMEN', (canvas.width / 4) * (i + 1), 60);
+      }
+      
+      // Bottom border
+      for (let i = 0; i < 3; i++) {
+        ctx.fillText('SPECIMEN', (canvas.width / 4) * (i + 1), canvas.height - 40);
+      }
+      
+      ctx.restore();
+    }
+
+    function renderCertificate() {
+      const locked = user.points < Eco.RULES.certificateThreshold;
+      document.getElementById('lockMsg').style.display = locked ? 'block' : 'none';
+      document.getElementById('downloadBtn').disabled = locked;
+      const img = new Image();
+      img.onload = () => draw(img);
+      img.onerror = () => draw(null);
+      img.src = user.avatarDataUrl || Eco.initialsAvatar(user.name);
+      const ul = document.getElementById('badgeList');
+      ul.innerHTML = (user.badges||[]).map(b=>`<li>${b}</li>`).join('') || '<li>No badges yet</li>';
+    }
+
+    document.getElementById('downloadBtn').onclick = () => {
+      const link = document.createElement('a');
+      link.download = 'ecoquest-certificate.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    };
+
+    document.getElementById('photo').onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => { user.avatarDataUrl = reader.result; Eco.upsertUser(user); renderCertificate(); };
+      reader.readAsDataURL(file);
+    };
+
+    renderCertificate();
+  </script>
+</body>
+</html>

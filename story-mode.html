@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoQuest | Story Mode Adventure</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .story-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .story-map {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 20px;
+      padding: 40px;
+      margin: 20px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .story-path {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      margin: 40px 0;
+    }
+    
+    .story-node {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .story-node.completed {
+      background: linear-gradient(135deg, var(--eco-green), var(--eco-green-dark));
+      color: white;
+      box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+    }
+    
+    .story-node.current {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: white;
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 30px rgba(251, 191, 36, 0.7);
+    }
+    
+    .story-node.locked {
+      background: #6b7280;
+      color: white;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .story-node:hover:not(.locked) {
+      transform: scale(1.1);
+    }
+    
+    .node-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    
+    .node-title {
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+    
+    .story-connector {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      z-index: 1;
+    }
+    
+    .chapter-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin: 20px 0;
+      border: 2px solid var(--eco-border);
+      transition: all 0.3s ease;
+    }
+    
+    .chapter-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .chapter-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .chapter-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: var(--eco-sage);
+    }
+    
+    .chapter-info {
+      flex: 1;
+    }
+    
+    .chapter-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    
+    .chapter-description {
+      color: var(--eco-muted);
+      margin-bottom: 8px;
+    }
+    
+    .chapter-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--eco-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--eco-green), var(--eco-green-dark));
+      transition: width 0.3s ease;
+    }
+    
+    .chapter-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 16px 0;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 12px;
+      background: var(--eco-sage);
+      border-radius: 8px;
+    }
+    
+    .stat-number {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--eco-green);
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: var(--eco-muted);
+    }
+    
+    .mission-card {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 12px 0;
+      color: #333;
+    }
+    
+    .mission-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    .mission-reward {
+      background: rgba(255,255,255,0.3);
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+    
+    .character-dialog {
+      background: white;
+      border: 3px solid var(--eco-green);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px 0;
+      position: relative;
+    }
+    
+    .character-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      float: left;
+      margin-right: 16px;
+      border: 3px solid var(--eco-green);
+    }
+    
+    .dialog-text {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-left: 96px;
+    }
+    
+    .choice-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      justify-content: center;
+    }
+    
+    .choice-btn {
+      padding: 12px 24px;
+      border: 2px solid var(--eco-green);
+      border-radius: 25px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .choice-btn:hover {
+      background: var(--eco-green);
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    .story-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+    }
+    
+    .modal-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <div class="logo"></div>
+        <div class="title">EcoQuest</div>
+      </a>
+      <div class="nav-links">
+        <a class="btn ghost" href="advanced-leaderboard.html">Leaderboard</a>
+        <a class="btn ghost" href="social-hub.html">Social Hub</a>
+        <a class="btn ghost" href="story-mode.html">Story Mode</a>
+        <a class="btn ghost" href="eco-simulator.html">Eco Simulator</a>
+        <a class="btn ghost" href="achievements.html">Achievements</a>
+        <div id="authButtons" class="nav-links" style="display:none"></div>
+        <div id="navUser" class="userbar" style="display:none">
+          <img alt="avatar" src=""/>
+          <span></span>
+          <button id="logoutBtn" class="btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container story-container" style="padding-top:20px;">
+    <h1 style="text-align: center; margin-bottom: 40px;">🌍 EcoQuest: Save the Planet Adventure</h1>
+    
+    <!-- Story Map -->
+    <div class="story-map">
+      <h2 style="color: white; text-align: center; margin-bottom: 30px;">🗺️ Your Journey to Save Earth</h2>
+      
+      <!-- Chapter 1 Path -->
+      <div class="story-path">
+        <div class="story-connector"></div>
+        <div class="story-node completed" onclick="openChapter(1)">
+          <div class="node-icon">🏠</div>
+          <div class="node-title">Home Base</div>
+        </div>
+        <div class="story-node completed" onclick="openChapter(2)">
+          <div class="node-icon">🌱</div>
+          <div class="node-title">First Steps</div>
+        </div>
+        <div class="story-node current" onclick="openChapter(3)">
+          <div class="node-icon">🌳</div>
+          <div class="node-title">Forest Guardian</div>
+        </div>
+        <div class="story-node locked">
+          <div class="node-icon">🌊</div>
+          <div class="node-title">Ocean Protector</div>
+        </div>
+        <div class="story-node locked">
+          <div class="node-icon">🏔️</div>
+          <div class="node-title">Mountain Climber</div>
+        </div>
+      </div>
+      
+      <!-- Chapter 2 Path -->
+      <div class="story-path">
+        <div class="story-connector"></div>
+        <div class="story-node locked">
+          <div class="node-icon">🏭</div>
+          <div class="node-title">City Cleaner</div>
+        </div>
+        <div class="story-node locked">
+          <div class="node-icon">⚡</div>
+          <div class="node-title">Energy Master</div>
+        </div>
+        <div class="story-node locked">
+          <div class="node-icon">♻️</div>
+          <div class="node-title">Recycling Hero</div>
+        </div>
+        <div class="story-node locked">
+          <div class="node-icon">🌍</div>
+          <div class="node-title">Global Leader</div>
+        </div>
+        <div class="story-node locked">
+          <div class="node-icon">👑</div>
+          <div class="node-title">Eco Champion</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Current Chapter Details -->
+    <div class="chapter-card">
+      <div class="chapter-header">
+        <div class="chapter-icon">🌳</div>
+        <div class="chapter-info">
+          <div class="chapter-title">Chapter 3: Forest Guardian</div>
+          <div class="chapter-description">Help restore the ancient forest and learn about biodiversity</div>
+          <div class="chapter-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 60%"></div>
+            </div>
+            <span>60% Complete</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="chapter-stats">
+        <div class="stat-item">
+          <div class="stat-number">3/5</div>
+          <div class="stat-label">Missions</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">150</div>
+          <div class="stat-label">Points Earned</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">2</div>
+          <div class="stat-label">Badges Unlocked</div>
+        </div>
+      </div>
+      
+      <div class="mission-card">
+        <div class="mission-title">🎯 Current Mission: Plant the Sacred Grove</div>
+        <div>Plant 20 native trees in the eco simulator to restore the forest's heart</div>
+        <div class="progress-bar" style="margin: 8px 0;">
+          <div class="progress-fill" style="width: 75%"></div>
+        </div>
+        <div style="font-size: 12px;">Progress: 15/20 trees planted</div>
+        <div class="mission-reward">Reward: +100 Eco-Points + Forest Guardian Badge</div>
+      </div>
+      
+      <button class="btn primary" style="width: 100%;" onclick="continueMission()">
+        🚀 Continue Mission
+      </button>
+    </div>
+    
+    <!-- Character Dialog -->
+    <div class="character-dialog">
+      <img class="character-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='35' fill='%2322c55e'/%3E%3Ctext x='40' y='50' font-size='30' text-anchor='middle' fill='white'%3E🧙‍♀️%3C/text%3E%3C/svg%3E" alt="Eco Sage">
+      <div class="dialog-text">
+        <strong>Eco Sage:</strong> "Well done, young guardian! The forest spirits are pleased with your progress. But beware - the ancient oak at the forest's heart is still withering. You must plant the sacred grove to restore its power. Are you ready for this crucial mission?"
+      </div>
+      <div class="choice-buttons">
+        <button class="choice-btn" onclick="makeChoice('ready')">✅ I'm ready!</button>
+        <button class="choice-btn" onclick="makeChoice('learn')">📚 Tell me more</button>
+        <button class="choice-btn" onclick="makeChoice('later')">⏰ Maybe later</button>
+      </div>
+    </div>
+    
+    <!-- Available Chapters -->
+    <h2>📖 Available Chapters</h2>
+    
+    <div class="chapter-card">
+      <div class="chapter-header">
+        <div class="chapter-icon">🏠</div>
+        <div class="chapter-info">
+          <div class="chapter-title">Chapter 1: Home Base ✅</div>
+          <div class="chapter-description">Learn the basics of environmental protection</div>
+          <div class="chapter-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 100%"></div>
+            </div>
+            <span>Complete</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn secondary" onclick="reviewChapter(1)">📖 Review Chapter</button>
+    </div>
+    
+    <div class="chapter-card">
+      <div class="chapter-header">
+        <div class="chapter-icon">🌱</div>
+        <div class="chapter-info">
+          <div class="chapter-title">Chapter 2: First Steps ✅</div>
+          <div class="chapter-description">Take your first actions to help the environment</div>
+          <div class="chapter-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 100%"></div>
+            </div>
+            <span>Complete</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn secondary" onclick="reviewChapter(2)">📖 Review Chapter</button>
+    </div>
+  </main>
+
+  <!-- Story Modal -->
+  <div id="storyModal" class="story-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-icon" id="modalIcon">🌟</div>
+      <h2 id="modalTitle">Chapter Complete!</h2>
+      <p id="modalText">Congratulations on completing this chapter!</p>
+      <button class="btn primary" onclick="closeModal()">Continue Adventure</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="ai-chatbot.js"></script>
+  <script>
+    const user = Eco.requireAuth();
+    
+    // Story progress data
+    const storyProgress = {
+      currentChapter: 3,
+      completedChapters: [1, 2],
+      currentMission: 'plant_sacred_grove',
+      missionProgress: {
+        plant_sacred_grove: { current: 15, target: 20 }
+      }
+    };
+    
+    // Chapter data
+    const chapters = {
+      1: {
+        title: 'Home Base',
+        icon: '🏠',
+        description: 'Learn the basics of environmental protection',
+        missions: ['learn_basics', 'first_quiz', 'join_community'],
+        completed: true
+      },
+      2: {
+        title: 'First Steps',
+        icon: '🌱',
+        description: 'Take your first actions to help the environment',
+        missions: ['plant_first_tree', 'reduce_waste', 'save_energy'],
+        completed: true
+      },
+      3: {
+        title: 'Forest Guardian',
+        icon: '🌳',
+        description: 'Help restore the ancient forest and learn about biodiversity',
+        missions: ['learn_trees', 'plant_grove', 'protect_wildlife'],
+        completed: false
+      }
+    };
+    
+    // Open chapter details
+    function openChapter(chapterNum) {
+      const chapter = chapters[chapterNum];
+      if (!chapter) return;
+      
+      if (chapterNum > storyProgress.currentChapter && !storyProgress.completedChapters.includes(chapterNum)) {
+        showModal('🔒', 'Chapter Locked', 'Complete the previous chapters to unlock this adventure!');
+        return;
+      }
+      
+      if (chapter.completed) {
+        showModal(chapter.icon, `${chapter.title} Complete!`, `You've successfully completed this chapter. Review your achievements or continue to the next adventure!`);
+      } else {
+        showModal(chapter.icon, chapter.title, `${chapter.description}\n\nReady to continue your mission?`);
+      }
+    }
+    
+    // Continue current mission
+    function continueMission() {
+      const mission = storyProgress.currentMission;
+      
+      if (mission === 'plant_sacred_grove') {
+        // Redirect to eco simulator
+        window.location.href = 'eco-simulator.html';
+      }
+    }
+    
+    // Make dialog choice
+    function makeChoice(choice) {
+      switch(choice) {
+        case 'ready':
+          showModal('🚀', 'Mission Accepted!', 'Head to the Eco Simulator to plant the sacred grove. The forest is counting on you!');
+          setTimeout(() => {
+            closeModal();
+            continueMission();
+          }, 2000);
+          break;
+          
+        case 'learn':
+          showModal('📚', 'Forest Wisdom', 'The sacred grove consists of 20 native trees that form a magical circle. Each tree you plant strengthens the forest\'s natural defenses against pollution and climate change. The ancient oak draws power from this grove to protect all forest life.');
+          break;
+          
+        case 'later':
+          showModal('⏰', 'Take Your Time', 'The forest will wait for you, young guardian. Return when you\'re ready to complete this important mission. Remember, every moment counts in our fight to save the planet!');
+          break;
+      }
+    }
+    
+    // Review completed chapter
+    function reviewChapter(chapterNum) {
+      const chapter = chapters[chapterNum];
+      showModal(chapter.icon, `Review: ${chapter.title}`, `You completed this chapter and learned: ${chapter.description}\n\nMissions completed: ${chapter.missions.length}\nPoints earned: ${chapterNum * 50}\nBadges unlocked: ${chapterNum}`);
+    }
+    
+    // Show modal
+    function showModal(icon, title, text) {
+      document.getElementById('modalIcon').textContent = icon;
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalText').textContent = text;
+      document.getElementById('storyModal').style.display = 'flex';
+    }
+    
+    // Close modal
+    function closeModal() {
+      document.getElementById('storyModal').style.display = 'none';
+    }
+    
+    // Simulate mission progress updates
+    function updateMissionProgress() {
+      const mission = storyProgress.missionProgress.plant_sacred_grove;
+      if (mission && mission.current < mission.target) {
+        mission.current = Math.min(mission.target, mission.current + 1);
+        
+        // Update UI
+        const progressPercent = (mission.current / mission.target) * 100;
+        document.querySelector('.mission-card .progress-fill').style.width = progressPercent + '%';
+        document.querySelector('.mission-card .progress-text').textContent = `Progress: ${mission.current}/${mission.target} trees planted`;
+        
+        // Check if mission complete
+        if (mission.current >= mission.target) {
+          setTimeout(() => {
+            showModal('🏆', 'Mission Complete!', 'Congratulations! You\'ve planted the sacred grove and restored the forest\'s power. The ancient oak glows with renewed life!');
+            
+            // Award points
+            if (user) {
+              Eco.awardPoints(user, 100, 'Sacred Grove Mission Complete');
+            }
+            
+            // Mark chapter as complete
+            chapters[3].completed = true;
+            storyProgress.completedChapters.push(3);
+            storyProgress.currentChapter = 4;
+          }, 1000);
+        }
+      }
+    }
+    
+    // Check for mission updates from eco simulator
+    function checkEcoSimulatorProgress() {
+      // In a real app, this would check the user's eco simulator data
+      // For demo, we'll simulate progress
+      if (Math.random() < 0.1) {
+        updateMissionProgress();
+      }
+    }
+    
+    // Make functions global
+    window.openChapter = openChapter;
+    window.continueMission = continueMission;
+    window.makeChoice = makeChoice;
+    window.reviewChapter = reviewChapter;
+    window.closeModal = closeModal;
+    
+    // Simulate real-time updates
+    setInterval(checkEcoSimulatorProgress, 3000);
+    
+    // Close modal when clicking outside
+    document.getElementById('storyModal').addEventListener('click', (e) => {
+      if (e.target.id === 'storyModal') {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>

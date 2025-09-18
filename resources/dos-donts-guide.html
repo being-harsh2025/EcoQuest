@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Do's & Don'ts for Environment - EcoQuest</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    .guide-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .section:hover {
+      transform: translateY(-5px);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .section-icon {
+      font-size: 3rem;
+      margin-right: 15px;
+    }
+
+    .dos .section-icon {
+      color: #22c55e;
+    }
+
+    .donts .section-icon {
+      color: #ef4444;
+    }
+
+    .section h2 {
+      font-size: 2rem;
+      color: #333;
+    }
+
+    .dos h2 {
+      color: #22c55e;
+    }
+
+    .donts h2 {
+      color: #ef4444;
+    }
+
+    .item-list {
+      list-style: none;
+    }
+
+    .item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      transition: background-color 0.3s ease;
+    }
+
+    .dos .item {
+      background: #f0fdf4;
+      border-left: 4px solid #22c55e;
+    }
+
+    .donts .item {
+      background: #fef2f2;
+      border-left: 4px solid #ef4444;
+    }
+
+    .item-icon {
+      font-size: 1.5rem;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+
+    .dos .item-icon {
+      color: #22c55e;
+    }
+
+    .donts .item-icon {
+      color: #ef4444;
+    }
+
+    .item-content h3 {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .item-content p {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .print-btn:hover {
+      background: #16a34a;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .guide-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .section {
+        padding: 20px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+      
+      .print-btn {
+        display: none;
+      }
+      
+      .section {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">🖨️ Print Guide</button>
+  
+  <div class="container">
+    <div class="header">
+      <h1>📋 Environmental Do's & Don'ts</h1>
+      <p>Your complete guide to eco-friendly living and environmental protection</p>
+    </div>
+
+    <div class="guide-container">
+      <!-- DO'S Section -->
+      <div class="section dos">
+        <div class="section-header">
+          <div class="section-icon">✅</div>
+          <h2>Environmental DO'S</h2>
+        </div>
+        
+        <ul class="item-list">
+          <li class="item">
+            <div class="item-icon">💧</div>
+            <div class="item-content">
+              <h3>Conserve Water</h3>
+              <p>Take shorter showers, fix leaks promptly, and use water-efficient appliances to reduce consumption.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">♻️</div>
+            <div class="item-content">
+              <h3>Recycle Properly</h3>
+              <p>Sort waste correctly, clean containers before recycling, and follow local recycling guidelines.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🚲</div>
+            <div class="item-content">
+              <h3>Use Sustainable Transport</h3>
+              <p>Walk, bike, use public transport, or carpool to reduce carbon emissions from vehicles.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">💡</div>
+            <div class="item-content">
+              <h3>Save Energy</h3>
+              <p>Use LED bulbs, unplug devices when not in use, and choose energy-efficient appliances.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🌱</div>
+            <div class="item-content">
+              <h3>Plant Trees & Gardens</h3>
+              <p>Plant native species, create green spaces, and support reforestation efforts in your community.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🛍️</div>
+            <div class="item-content">
+              <h3>Use Reusable Items</h3>
+              <p>Carry reusable bags, water bottles, and containers to reduce single-use plastic waste.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🥬</div>
+            <div class="item-content">
+              <h3>Compost Organic Waste</h3>
+              <p>Turn food scraps and yard waste into nutrient-rich compost for gardens and plants.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🌍</div>
+            <div class="item-content">
+              <h3>Support Eco-Friendly Products</h3>
+              <p>Choose products with minimal packaging, made from sustainable materials, and from responsible companies.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- DON'TS Section -->
+      <div class="section donts">
+        <div class="section-header">
+          <div class="section-icon">❌</div>
+          <h2>Environmental DON'TS</h2>
+        </div>
+        
+        <ul class="item-list">
+          <li class="item">
+            <div class="item-icon">🚯</div>
+            <div class="item-content">
+              <h3>Don't Litter</h3>
+              <p>Never throw trash on the ground, in water bodies, or in natural areas. Always dispose of waste properly.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🚰</div>
+            <div class="item-content">
+              <h3>Don't Waste Water</h3>
+              <p>Avoid leaving taps running, taking excessively long showers, or overwatering plants.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🔥</div>
+            <div class="item-content">
+              <h3>Don't Burn Waste</h3>
+              <p>Never burn plastic, chemicals, or other materials that release toxic fumes into the atmosphere.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🏭</div>
+            <div class="item-content">
+              <h3>Don't Support Polluting Industries</h3>
+              <p>Avoid products from companies with poor environmental records or unsustainable practices.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🦎</div>
+            <div class="item-content">
+              <h3>Don't Harm Wildlife</h3>
+              <p>Never disturb natural habitats, feed wild animals, or purchase products made from endangered species.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🧪</div>
+            <div class="item-content">
+              <h3>Don't Use Harmful Chemicals</h3>
+              <p>Avoid pesticides, harsh cleaners, and chemicals that can contaminate soil and water sources.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🚗</div>
+            <div class="item-content">
+              <h3>Don't Idle Vehicles</h3>
+              <p>Turn off your engine when parked or waiting to reduce unnecessary fuel consumption and emissions.</p>
+            </div>
+          </li>
+          
+          <li class="item">
+            <div class="item-icon">🛒</div>
+            <div class="item-content">
+              <h3>Don't Overconsume</h3>
+              <p>Avoid buying unnecessary items, fast fashion, or products with excessive packaging.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

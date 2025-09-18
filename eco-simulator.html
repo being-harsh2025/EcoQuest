@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoQuest | Eco City Simulator</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .simulator-container {
+      display: grid;
+      grid-template-columns: 300px 1fr 250px;
+      gap: 20px;
+      height: calc(100vh - 120px);
+    }
+    
+    .control-panel {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      border: 2px solid var(--eco-border);
+      overflow-y: auto;
+    }
+    
+    .game-canvas {
+      background: white;
+      border-radius: 16px;
+      border: 2px solid var(--eco-border);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stats-panel {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      border: 2px solid var(--eco-border);
+      overflow-y: auto;
+    }
+    
+    #gameCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+    
+    .building-btn {
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border: 2px solid var(--eco-border);
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .building-btn:hover {
+      background: var(--eco-sage);
+      border-color: var(--eco-green);
+      transform: translateY(-2px);
+    }
+    
+    .building-btn.selected {
+      background: var(--eco-green);
+      color: white;
+      border-color: var(--eco-green-dark);
+    }
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--eco-border);
+    }
+    
+    .stat-value {
+      font-weight: 600;
+      color: var(--eco-forest);
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--eco-border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 4px 0;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--eco-green), var(--eco-green-dark));
+      transition: width 0.3s ease;
+    }
+    
+    .challenge-card {
+      background: var(--eco-sage);
+      border: 1px solid var(--eco-border);
+      border-radius: 12px;
+      padding: 12px;
+      margin: 8px 0;
+    }
+    
+    .challenge-timer {
+      font-size: 14px;
+      color: var(--eco-muted);
+      font-weight: 500;
+    }
+    
+    .notification {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--eco-green);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .multiplayer-section {
+      border-top: 2px solid var(--eco-border);
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+    
+    .player-list {
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    
+    .player-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+    
+    .player-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--eco-green);
+    }
+    
+    .disaster-warning {
+      background: linear-gradient(135deg, #ff6b6b, #ff5252);
+      color: white;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 8px 0;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <div class="logo"></div>
+        <div class="title">EcoQuest</div>
+      </a>
+      <div class="nav-links">
+        <a class="btn ghost" href="leaderboard.html">Leaderboard</a>
+        <a class="btn ghost" href="quiz.html">Quizzes</a>
+        <a class="btn ghost" href="challenges.html">Challenges</a>
+        <a class="btn ghost" href="game.html">Mini Game</a>
+        <a class="btn ghost" href="eco-simulator.html">Eco Simulator</a>
+        <a class="btn ghost" href="certificate.html">Certificate</a>
+        <div id="authButtons" class="nav-links" style="display:none"></div>
+        <div id="navUser" class="userbar" style="display:none">
+          <img alt="avatar" src=""/>
+          <span></span>
+          <button id="logoutBtn" class="btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:20px;">
+    <div class="simulator-container">
+      <!-- Control Panel -->
+      <div class="control-panel">
+        <h3>🏗️ Build Your Eco City</h3>
+        <p class="helper">Click buildings then place on map</p>
+        
+        <div class="building-category">
+          <h4>🏠 Residential</h4>
+          <button class="building-btn" data-building="house" data-cost="100" data-pollution="-1">
+            <span>🏠</span>
+            <div>
+              <div>Eco House</div>
+              <small>Cost: 100 💰 | Pollution: -1</small>
+            </div>
+          </button>
+          <button class="building-btn" data-building="apartment" data-cost="300" data-pollution="-2">
+            <span>🏢</span>
+            <div>
+              <div>Green Apartment</div>
+              <small>Cost: 300 💰 | Pollution: -2</small>
+            </div>
+          </button>
+        </div>
+        
+        <div class="building-category">
+          <h4>🌱 Green Energy</h4>
+          <button class="building-btn" data-building="solar" data-cost="200" data-energy="3">
+            <span>☀️</span>
+            <div>
+              <div>Solar Panel</div>
+              <small>Cost: 200 💰 | Energy: +3</small>
+            </div>
+          </button>
+          <button class="building-btn" data-building="wind" data-cost="400" data-energy="5">
+            <span>💨</span>
+            <div>
+              <div>Wind Turbine</div>
+              <small>Cost: 400 💰 | Energy: +5</small>
+            </div>
+          </button>
+          <button class="building-btn" data-building="hydro" data-cost="600" data-energy="8">
+            <span>💧</span>
+            <div>
+              <div>Hydro Plant</div>
+              <small>Cost: 600 💰 | Energy: +8</small>
+            </div>
+          </button>
+        </div>
+        
+        <div class="building-category">
+          <h4>🌳 Nature</h4>
+          <button class="building-btn" data-building="tree" data-cost="50" data-pollution="-2">
+            <span>🌳</span>
+            <div>
+              <div>Tree</div>
+              <small>Cost: 50 💰 | Pollution: -2</small>
+            </div>
+          </button>
+          <button class="building-btn" data-building="park" data-cost="150" data-pollution="-5">
+            <span>🏞️</span>
+            <div>
+              <div>Eco Park</div>
+              <small>Cost: 150 💰 | Pollution: -5</small>
+            </div>
+          </button>
+          <button class="building-btn" data-building="forest" data-cost="500" data-pollution="-10">
+            <span>🌲</span>
+            <div>
+              <div>Forest Reserve</div>
+              <small>Cost: 500 💰 | Pollution: -10</small>
+            </div>
+          </button>
+        </div>
+        
+        <div class="building-category">
+          <h4>♻️ Recycling</h4>
+          <button class="building-btn" data-building="recycle" data-cost="250" data-pollution="-3">
+            <span>♻️</span>
+            <div>
+              <div>Recycling Center</div>
+              <small>Cost: 250 💰 | Pollution: -3</small>
+            </div>
+          </button>
+          <button class="building-btn" data-building="compost" data-cost="180" data-pollution="-2">
+            <span>🌱</span>
+            <div>
+              <div>Compost Facility</div>
+              <small>Cost: 180 💰 | Pollution: -2</small>
+            </div>
+          </button>
+        </div>
+        
+        <button id="clearSelection" class="btn secondary" style="width: 100%; margin-top: 16px;">
+          ❌ Clear Selection
+        </button>
+      </div>
+      
+      <!-- Game Canvas -->
+      <div class="game-canvas">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+      </div>
+      
+      <!-- Stats Panel -->
+      <div class="stats-panel">
+        <h3>📊 City Stats</h3>
+        
+        <div class="stat-item">
+          <span>💰 Money</span>
+          <span class="stat-value" id="money">1000</span>
+        </div>
+        
+        <div class="stat-item">
+          <span>👥 Population</span>
+          <span class="stat-value" id="population">0</span>
+        </div>
+        
+        <div class="stat-item">
+          <span>⚡ Energy</span>
+          <span class="stat-value" id="energy">0</span>
+        </div>
+        
+        <div class="stat-item">
+          <span>🌍 Eco Score</span>
+          <span class="stat-value" id="ecoScore">100</span>
+        </div>
+        
+        <div class="stat-item">
+          <span>😊 Happiness</span>
+          <div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="happinessBar" style="width: 50%"></div>
+            </div>
+            <span class="stat-value" id="happiness">50%</span>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <span>🏭 Pollution</span>
+          <div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="pollutionBar" style="width: 20%; background: linear-gradient(90deg, #ff6b6b, #ff5252);"></div>
+            </div>
+            <span class="stat-value" id="pollution">20%</span>
+          </div>
+        </div>
+        
+        <h4 style="margin-top: 20px;">🎯 Active Challenges</h4>
+        <div id="challengesList">
+          <div class="challenge-card">
+            <div><strong>🌳 Plant 10 Trees</strong></div>
+            <div class="challenge-timer">⏰ 5:32 remaining</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 30%"></div>
+            </div>
+            <small>Progress: 3/10 trees</small>
+          </div>
+          
+          <div class="challenge-card">
+            <div><strong>⚡ Reach 50 Energy</strong></div>
+            <div class="challenge-timer">⏰ 8:15 remaining</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 0%"></div>
+            </div>
+            <small>Progress: 0/50 energy</small>
+          </div>
+        </div>
+        
+        <div class="multiplayer-section">
+          <h4>👥 Online Players</h4>
+          <div class="player-list">
+            <div class="player-item">
+              <div class="player-status"></div>
+              <span>Alex_EcoWarrior</span>
+            </div>
+            <div class="player-item">
+              <div class="player-status"></div>
+              <span>GreenThumb_Maya</span>
+            </div>
+            <div class="player-item">
+              <div class="player-status"></div>
+              <span>ClimateChampion</span>
+            </div>
+          </div>
+          
+          <button class="btn primary" style="width: 100%; margin-top: 12px;">
+            🤝 Join Multiplayer Room
+          </button>
+        </div>
+        
+        <div id="disasterWarning" style="display: none;">
+          <div class="disaster-warning">
+            <strong>⚠️ Climate Disaster!</strong>
+            <div>Extreme weather incoming in 30s</div>
+            <small>Build more green infrastructure!</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- EcoBot Chatbot -->
+  <div id="ecoChatbot" class="eco-chatbot" style="position: fixed; bottom: 20px; right: 20px; z-index: 10000; font-family: Inter, system-ui, sans-serif;">
+    <div class="chatbot-toggle" id="chatbotToggle" style="display: flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 12px 16px; border-radius: 25px; cursor: pointer; box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3); transition: all 0.3s ease; animation: pulse 2s infinite;">
+      <div class="bot-avatar" style="font-size: 20px;">🤖</div>
+      <div class="toggle-text" style="font-weight: 600; font-size: 14px;">EcoBot</div>
+    </div>
+    
+    <div class="chatbot-window" id="chatbotWindow" style="position: absolute; bottom: 70px; right: 0; width: 380px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; border: 2px solid #e5e7eb;">
+      <div class="chatbot-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white;">
+        <div class="bot-info" style="display: flex; align-items: center; gap: 12px;">
+          <div class="bot-avatar-large" style="font-size: 32px;">🌱</div>
+          <div>
+            <div class="bot-name" style="font-weight: 600; font-size: 16px;">EcoBot Assistant</div>
+            <div class="bot-status" style="font-size: 12px; opacity: 0.9;">Online • Ready to help</div>
+          </div>
+        </div>
+        <button class="close-btn" id="closeChatbot" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 4px; border-radius: 4px;">×</button>
+      </div>
+      
+      <div class="chat-messages" id="chatMessages" style="flex: 1; overflow-y: auto; padding: 16px; background: #f9fafb;">
+        <div class="message bot-message" style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <div class="message-avatar" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; background: #22c55e;">🌱</div>
+          <div class="message-content" style="max-width: 280px;">
+            <div class="message-text" style="background: white; padding: 12px 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); line-height: 1.4; font-size: 14px;">Hi! I'm EcoBot, your environmental assistant! 🌍 Ask me about earning points, challenges, or environmental topics!</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="chat-input-area" style="padding: 16px; border-top: 1px solid #e5e7eb; background: white;">
+        <div class="chat-input" style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="chatInput" placeholder="Ask me anything..." maxlength="500" style="flex: 1; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 25px; outline: none; font-size: 14px;">
+          <button id="sendMessage" class="send-btn" style="background: #22c55e; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="ai-chatbot.js"></script>
+  <script>
+    const user = Eco.requireAuth();
+    
+    // Game State
+    const gameState = {
+      money: 1000,
+      population: 0,
+      energy: 0,
+      pollution: 20,
+      happiness: 50,
+      ecoScore: 100,
+      buildings: [],
+      selectedBuilding: null,
+      challenges: [
+        { id: 'trees', name: 'Plant 10 Trees', target: 10, current: 0, timeLeft: 332, reward: 100 },
+        { id: 'energy', name: 'Reach 50 Energy', target: 50, current: 0, timeLeft: 495, reward: 150 }
+      ]
+    };
+    
+    // Canvas setup
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Building types with emojis and properties
+    const buildingTypes = {
+      house: { emoji: '🏠', size: 40, color: '#8B4513' },
+      apartment: { emoji: '🏢', size: 50, color: '#696969' },
+      solar: { emoji: '☀️', size: 35, color: '#FFD700' },
+      wind: { emoji: '💨', size: 45, color: '#87CEEB' },
+      hydro: { emoji: '💧', size: 50, color: '#4169E1' },
+      tree: { emoji: '🌳', size: 30, color: '#228B22' },
+      park: { emoji: '🏞️', size: 60, color: '#32CD32' },
+      forest: { emoji: '🌲', size: 80, color: '#006400' },
+      recycle: { emoji: '♻️', size: 40, color: '#00CED1' },
+      compost: { emoji: '🌱', size: 35, color: '#9ACD32' }
+    };
+    
+    // Event listeners
+    document.querySelectorAll('.building-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Clear previous selection
+        document.querySelectorAll('.building-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        
+        gameState.selectedBuilding = {
+          type: btn.dataset.building,
+          cost: parseInt(btn.dataset.cost),
+          pollution: parseInt(btn.dataset.pollution || 0),
+          energy: parseInt(btn.dataset.energy || 0)
+        };
+        
+        canvas.style.cursor = 'crosshair';
+        showNotification(`Selected: ${btn.textContent.trim()}`);
+      });
+    });
+    
+    document.getElementById('clearSelection').addEventListener('click', () => {
+      gameState.selectedBuilding = null;
+      document.querySelectorAll('.building-btn').forEach(b => b.classList.remove('selected'));
+      canvas.style.cursor = 'default';
+      showNotification('Selection cleared');
+    });
+    
+    canvas.addEventListener('click', (e) => {
+      if (!gameState.selectedBuilding) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      // Check if we can afford the building
+      if (gameState.money < gameState.selectedBuilding.cost) {
+        showNotification('Not enough money!', 'error');
+        return;
+      }
+      
+      // Check for overlapping buildings
+      const overlap = gameState.buildings.some(building => {
+        const dx = Math.abs(building.x - x);
+        const dy = Math.abs(building.y - y);
+        const minDistance = (buildingTypes[building.type].size + buildingTypes[gameState.selectedBuilding.type].size) / 2;
+        return dx < minDistance && dy < minDistance;
+      });
+      
+      if (overlap) {
+        showNotification('Cannot build here - too close to another building!', 'error');
+        return;
+      }
+      
+      // Place the building
+      placeBuilding(x, y);
+    });
+    
+    function placeBuilding(x, y) {
+      const building = {
+        type: gameState.selectedBuilding.type,
+        x: x,
+        y: y,
+        id: Date.now()
+      };
+      
+      gameState.buildings.push(building);
+      gameState.money -= gameState.selectedBuilding.cost;
+      
+      // Update stats based on building type
+      if (gameState.selectedBuilding.pollution) {
+        gameState.pollution = Math.max(0, gameState.pollution + gameState.selectedBuilding.pollution);
+      }
+      
+      if (gameState.selectedBuilding.energy) {
+        gameState.energy += gameState.selectedBuilding.energy;
+      }
+      
+      // Update population for residential buildings
+      if (building.type === 'house') {
+        gameState.population += 4;
+      } else if (building.type === 'apartment') {
+        gameState.population += 12;
+      }
+      
+      // Update challenges
+      updateChallenges(building.type);
+      
+      // Calculate happiness and eco score
+      calculateStats();
+      
+      // Award points for eco-friendly buildings
+      if (['solar', 'wind', 'hydro', 'tree', 'park', 'forest', 'recycle', 'compost'].includes(building.type)) {
+        const points = Math.floor(gameState.selectedBuilding.cost / 10);
+        Eco.awardPoints(user, points, `Built ${building.type}`);
+        showNotification(`+${points} Eco-Points earned!`, 'success');
+      }
+      
+      updateUI();
+      drawGame();
+      
+      showNotification(`${buildingTypes[building.type].emoji} Built successfully!`, 'success');
+    }
+    
+    function updateChallenges(buildingType) {
+      gameState.challenges.forEach(challenge => {
+        if (challenge.id === 'trees' && ['tree', 'park', 'forest'].includes(buildingType)) {
+          challenge.current = Math.min(challenge.target, challenge.current + 1);
+        }
+        if (challenge.id === 'energy') {
+          challenge.current = gameState.energy;
+        }
+      });
+    }
+    
+    function calculateStats() {
+      // Calculate happiness based on pollution and green buildings
+      const greenBuildings = gameState.buildings.filter(b => 
+        ['tree', 'park', 'forest', 'solar', 'wind', 'hydro'].includes(b.type)
+      ).length;
+      
+      gameState.happiness = Math.max(0, Math.min(100, 
+        50 + (greenBuildings * 5) - (gameState.pollution * 2)
+      ));
+      
+      // Calculate eco score
+      gameState.ecoScore = Math.max(0, Math.min(200, 
+        100 + (greenBuildings * 3) - gameState.pollution + (gameState.energy * 2)
+      ));
+      
+      // Passive income from population
+      gameState.money += Math.floor(gameState.population * 0.5);
+    }
+    
+    function drawGame() {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw grid background
+      ctx.strokeStyle = '#f0f0f0';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      
+      // Draw buildings
+      gameState.buildings.forEach(building => {
+        const type = buildingTypes[building.type];
+        
+        // Draw building shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.1)';
+        ctx.fillRect(building.x - type.size/2 + 2, building.y - type.size/2 + 2, type.size, type.size);
+        
+        // Draw building base
+        ctx.fillStyle = type.color;
+        ctx.fillRect(building.x - type.size/2, building.y - type.size/2, type.size, type.size);
+        
+        // Draw building emoji
+        ctx.font = `${type.size * 0.6}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(type.emoji, building.x, building.y);
+        
+        // Draw building border
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(building.x - type.size/2, building.y - type.size/2, type.size, type.size);
+      });
+      
+      // Draw selection preview
+      if (gameState.selectedBuilding) {
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = '#22c55e';
+        const size = buildingTypes[gameState.selectedBuilding.type].size;
+        ctx.fillRect(0, 0, size, size);
+        ctx.globalAlpha = 1;
+      }
+    }
+    
+    function updateUI() {
+      document.getElementById('money').textContent = gameState.money;
+      document.getElementById('population').textContent = gameState.population;
+      document.getElementById('energy').textContent = gameState.energy;
+      document.getElementById('ecoScore').textContent = gameState.ecoScore;
+      document.getElementById('happiness').textContent = gameState.happiness + '%';
+      document.getElementById('pollution').textContent = gameState.pollution + '%';
+      
+      // Update progress bars
+      document.getElementById('happinessBar').style.width = gameState.happiness + '%';
+      document.getElementById('pollutionBar').style.width = gameState.pollution + '%';
+      
+      // Update challenges
+      updateChallengesDisplay();
+    }
+    
+    function updateChallengesDisplay() {
+      const challengesList = document.getElementById('challengesList');
+      challengesList.innerHTML = '';
+      
+      gameState.challenges.forEach(challenge => {
+        const progress = Math.min(100, (challenge.current / challenge.target) * 100);
+        const minutes = Math.floor(challenge.timeLeft / 60);
+        const seconds = challenge.timeLeft % 60;
+        
+        const challengeCard = document.createElement('div');
+        challengeCard.className = 'challenge-card';
+        challengeCard.innerHTML = `
+          <div><strong>${getEmojiForChallenge(challenge.id)} ${challenge.name}</strong></div>
+          <div class="challenge-timer">⏰ ${minutes}:${seconds.toString().padStart(2, '0')} remaining</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${progress}%"></div>
+          </div>
+          <small>Progress: ${challenge.current}/${challenge.target} | Reward: +${challenge.reward} points</small>
+        `;
+        
+        challengesList.appendChild(challengeCard);
+        
+        // Check if challenge is completed
+        if (challenge.current >= challenge.target && !challenge.completed) {
+          challenge.completed = true;
+          Eco.awardPoints(user, challenge.reward, `Challenge: ${challenge.name}`);
+          showNotification(`🎉 Challenge completed! +${challenge.reward} Eco-Points!`, 'success');
+        }
+      });
+    }
+    
+    function getEmojiForChallenge(id) {
+      const emojis = {
+        trees: '🌳',
+        energy: '⚡',
+        pollution: '🌍',
+        population: '👥'
+      };
+      return emojis[id] || '🎯';
+    }
+    
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      
+      if (type === 'error') {
+        notification.style.background = 'linear-gradient(135deg, #ff6b6b, #ff5252)';
+      } else if (type === 'success') {
+        notification.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+      }
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+    
+    // Game loop
+    function gameLoop() {
+      // Update challenge timers
+      gameState.challenges.forEach(challenge => {
+        if (!challenge.completed && challenge.timeLeft > 0) {
+          challenge.timeLeft--;
+        }
+      });
+      
+      // Calculate stats
+      calculateStats();
+      
+      // Update UI
+      updateUI();
+      
+      // Check for disasters (random events)
+      if (Math.random() < 0.001 && gameState.pollution > 50) {
+        triggerDisaster();
+      }
+    }
+    
+    function triggerDisaster() {
+      document.getElementById('disasterWarning').style.display = 'block';
+      showNotification('⚠️ Climate disaster warning! Build more green infrastructure!', 'error');
+      
+      setTimeout(() => {
+        document.getElementById('disasterWarning').style.display = 'none';
+        // Reduce happiness and increase pollution
+        gameState.happiness = Math.max(0, gameState.happiness - 20);
+        gameState.pollution = Math.min(100, gameState.pollution + 10);
+        showNotification('💥 Disaster struck! Happiness and pollution affected!', 'error');
+      }, 30000);
+    }
+    
+    // Initialize game
+    drawGame();
+    updateUI();
+    
+    // Start game loop
+    setInterval(gameLoop, 1000);
+    
+    // Add CSS for slideOut animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Simple Chatbot Functionality
+    let chatbotOpen = false;
+    
+    // Toggle chatbot
+    document.getElementById('chatbotToggle').addEventListener('click', function() {
+      const window = document.getElementById('chatbotWindow');
+      chatbotOpen = !chatbotOpen;
+      window.style.display = chatbotOpen ? 'flex' : 'none';
+      if (chatbotOpen) {
+        document.getElementById('chatInput').focus();
+      }
+    });
+    
+    // Close chatbot
+    document.getElementById('closeChatbot').addEventListener('click', function() {
+      chatbotOpen = false;
+      document.getElementById('chatbotWindow').style.display = 'none';
+    });
+    
+    // Send message
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+      
+      // Add user message
+      addChatMessage(message, 'user');
+      input.value = '';
+      
+      // Generate bot response
+      setTimeout(() => {
+        const response = generateBotResponse(message.toLowerCase());
+        addChatMessage(response, 'bot');
+      }, 1000);
+    }
+    
+    // Add message to chat
+    function addChatMessage(text, sender) {
+      const messagesContainer = document.getElementById('chatMessages');
+      const messageHTML = `
+        <div class="message ${sender}-message" style="display: flex; gap: 8px; margin-bottom: 16px; ${sender === 'user' ? 'flex-direction: row-reverse;' : ''}">
+          <div class="message-avatar" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; background: ${sender === 'bot' ? '#22c55e' : '#3b82f6'};">${sender === 'bot' ? '🌱' : '👤'}</div>
+          <div class="message-content" style="max-width: 280px;">
+            <div class="message-text" style="background: ${sender === 'bot' ? 'white' : '#3b82f6'}; color: ${sender === 'bot' ? 'black' : 'white'}; padding: 12px 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); line-height: 1.4; font-size: 14px;">${text}</div>
+          </div>
+        </div>
+      `;
+      messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Generate bot responses
+    function generateBotResponse(message) {
+      if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
+        return "Hi there! 🌱 I'm EcoBot, your environmental assistant! Ask me about earning points, challenges, or environmental topics!";
+      }
+      
+      if (message.includes('points') || message.includes('earn') || message.includes('score')) {
+        return "🎯 Earn Eco-Points by:\n• Completing quizzes: +5 points\n• Finishing challenges: +50 points\n• Daily login: +2 points\n• Eco simulator actions: +10-20 points\n\n" + (user ? `You have ${user.points || 0} points!` : 'Sign in to start earning!') + " 💚";
+      }
+      
+      if (message.includes('challenge') || message.includes('task')) {
+        return "🎯 EcoQuest Challenges:\n\n🌳 Plant trees with photo proof\n♻️ Waste segregation projects\n🚴 Sustainable transport\n💡 Energy saving initiatives\n🧹 Community cleanup drives\n\nEach gives +50 points! 📸";
+      }
+      
+      if (message.includes('climate') || message.includes('environment')) {
+        return "🌍 Climate change is global warming caused by greenhouse gas emissions. You can help by:\n\n• Using renewable energy\n• Reducing waste\n• Planting trees\n• Using sustainable transport\n\nTry our Eco Simulator to learn more! 🌱";
+      }
+      
+      if (message.includes('simulator') || message.includes('game')) {
+        return "🏗️ The Eco Simulator lets you:\n\n• Build sustainable cities\n• Plant virtual trees\n• Use renewable energy\n• Manage pollution levels\n• Complete challenges\n\nStart building your eco-city now! 🌆";
+      }
+      
+      if (message.includes('help') || message.includes('how')) {
+        return "🆘 I can help with:\n\n🌍 Environmental facts\n🎮 EcoQuest features\n🏆 Earning points\n📊 Understanding impact\n🤝 Social features\n\nJust ask me anything! 💬";
+      }
+      
+      // Default responses
+      const defaults = [
+        "🌱 That's interesting! Did you know forests absorb 2.6 billion tons of CO₂ annually? Try our Eco Simulator! 🌳",
+        "🌍 Great question! Recycling one aluminum can saves enough energy to power a TV for 3 hours! ♻️",
+        "💡 I'd love to help more! Ask me about climate change, earning points, or EcoQuest features! 🎯",
+        "🌊 Fun fact: Our oceans absorb 25% of all CO₂ emissions! Learn more in our Story Mode! 🐋"
+      ];
+      return defaults[Math.floor(Math.random() * defaults.length)];
+    }
+    
+    // Event listeners
+    document.getElementById('sendMessage').addEventListener('click', sendChatMessage);
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') sendChatMessage();
+    });
+    
+    // Add pulse animation
+    const pulseStyle = document.createElement('style');
+    pulseStyle.textContent = `
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+    `;
+    document.head.appendChild(pulseStyle);
+  </script>
+</body>
+</html>

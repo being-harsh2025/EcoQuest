@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Environmental Charts & Infographics - EcoQuest</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .chart-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .chart-header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #3b82f6;
+    }
+
+    .chart-header h2 {
+      color: #1e40af;
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+
+    .chart-header p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .pie-chart {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      margin: 20px auto;
+      position: relative;
+      background: conic-gradient(
+        #ef4444 0deg 129.6deg,
+        #f97316 129.6deg 201.6deg,
+        #eab308 201.6deg 259.2deg,
+        #22c55e 259.2deg 302.4deg,
+        #06b6d4 302.4deg 360deg
+      );
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: end;
+      height: 200px;
+      gap: 15px;
+      margin: 20px 0;
+      padding: 0 20px;
+    }
+
+    .bar {
+      flex: 1;
+      background: linear-gradient(to top, #3b82f6, #60a5fa);
+      border-radius: 5px 5px 0 0;
+      position: relative;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      padding-bottom: 5px;
+    }
+
+    .bar-label {
+      position: absolute;
+      bottom: -25px;
+      font-size: 11px;
+      color: #333;
+      text-align: center;
+      width: 100%;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      margin-right: 10px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 15px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #1e40af;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .timeline-chart {
+      position: relative;
+      margin: 30px 0;
+    }
+
+    .timeline-line {
+      height: 3px;
+      background: linear-gradient(to right, #ef4444, #f97316, #eab308, #22c55e);
+      border-radius: 2px;
+      position: relative;
+    }
+
+    .timeline-point {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: white;
+      border: 3px solid #3b82f6;
+      border-radius: 50%;
+      top: -6px;
+      transform: translateX(-50%);
+    }
+
+    .timeline-label {
+      position: absolute;
+      top: 20px;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      text-align: center;
+      color: #666;
+    }
+
+    .infographic-section {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      margin: 30px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .infographic-title {
+      text-align: center;
+      color: #1e40af;
+      font-size: 2rem;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #3b82f6;
+    }
+
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .fact-card {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      border: 2px solid #0ea5e9;
+      transition: transform 0.3s ease;
+    }
+
+    .fact-card:hover {
+      transform: scale(1.05);
+    }
+
+    .fact-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .fact-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #0c4a6e;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .fact-description {
+      color: #0c4a6e;
+      font-weight: 500;
+    }
+
+    .comparison-chart {
+      display: flex;
+      justify-content: space-around;
+      align-items: end;
+      height: 250px;
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 15px;
+    }
+
+    .comparison-item {
+      text-align: center;
+      flex: 1;
+      max-width: 120px;
+    }
+
+    .comparison-bar {
+      width: 60px;
+      margin: 0 auto 15px;
+      border-radius: 30px 30px 0 0;
+      position: relative;
+      background: linear-gradient(to top, #dc2626, #ef4444);
+    }
+
+    .comparison-bar.renewable {
+      background: linear-gradient(to top, #16a34a, #22c55e);
+    }
+
+    .comparison-label {
+      font-size: 0.9rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .print-btn:hover {
+      background: #16a34a;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .chart-card {
+        padding: 20px;
+      }
+      
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .comparison-chart {
+        flex-direction: column;
+        height: auto;
+        gap: 20px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+      
+      .print-btn {
+        display: none;
+      }
+      
+      .chart-card, .infographic-section {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-btn" onclick="window.print()">🖨️ Print Charts</button>
+  
+  <div class="container">
+    <div class="header">
+      <h1>📊 Environmental Charts & Infographics</h1>
+      <p>Visual data and statistics about climate change and environmental issues</p>
+    </div>
+
+    <div class="charts-grid">
+      <!-- Global Emissions Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2>Global CO₂ Emissions by Sector</h2>
+          <p>Breakdown of greenhouse gas emissions by industry (2023)</p>
+        </div>
+        
+        <div class="pie-chart"></div>
+        
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background: #ef4444;"></div>
+            <span>Energy (36%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #f97316;"></div>
+            <span>Industry (20%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #eab308;"></div>
+            <span>Agriculture (16%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #22c55e;"></div>
+            <span>Transport (12%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #06b6d4;"></div>
+            <span>Buildings (16%)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Temperature Rise Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2>Global Temperature Anomaly</h2>
+          <p>Temperature change from 1880-2023 (°C above 20th century average)</p>
+        </div>
+        
+        <div class="bar-chart">
+          <div class="bar" style="height: 20%;">
+            <span>-0.2</span>
+            <div class="bar-label">1880</div>
+          </div>
+          <div class="bar" style="height: 30%;">
+            <span>-0.1</span>
+            <div class="bar-label">1900</div>
+          </div>
+          <div class="bar" style="height: 45%;">
+            <span>0.0</span>
+            <div class="bar-label">1950</div>
+          </div>
+          <div class="bar" style="height: 65%;">
+            <span>+0.4</span>
+            <div class="bar-label">1980</div>
+          </div>
+          <div class="bar" style="height: 85%;">
+            <span>+0.8</span>
+            <div class="bar-label">2000</div>
+          </div>
+          <div class="bar" style="height: 100%;">
+            <span>+1.1</span>
+            <div class="bar-label">2023</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Renewable Energy Growth -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2>Renewable Energy Capacity</h2>
+          <p>Global renewable energy growth (2020-2023)</p>
+        </div>
+        
+        <div class="stat-grid">
+          <div class="stat-item">
+            <span class="stat-number">30%</span>
+            <div class="stat-label">of global electricity from renewables</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">295 GW</span>
+            <div class="stat-label">new capacity added in 2022</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">83%</span>
+            <div class="stat-label">of new capacity was renewable</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">3,372 GW</span>
+            <div class="stat-label">total renewable capacity</div>
+          </div>
+        </div>
+        
+        <div class="timeline-chart">
+          <div class="timeline-line">
+            <div class="timeline-point" style="left: 0%;"></div>
+            <div class="timeline-point" style="left: 33%;"></div>
+            <div class="timeline-point" style="left: 66%;"></div>
+            <div class="timeline-point" style="left: 100%;"></div>
+          </div>
+          <div class="timeline-label" style="left: 0%;">2020<br>2,799 GW</div>
+          <div class="timeline-label" style="left: 33%;">2021<br>3,064 GW</div>
+          <div class="timeline-label" style="left: 66%;">2022<br>3,372 GW</div>
+          <div class="timeline-label" style="left: 100%;">2023<br>3,870 GW</div>
+        </div>
+      </div>
+
+      <!-- Plastic Pollution Stats -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2>Ocean Plastic Pollution</h2>
+          <p>Impact of plastic waste on marine ecosystems</p>
+        </div>
+        
+        <div class="comparison-chart">
+          <div class="comparison-item">
+            <div class="comparison-bar" style="height: 180px;"></div>
+            <div class="comparison-label">8 Million<br>Tons per year</div>
+          </div>
+          <div class="comparison-item">
+            <div class="comparison-bar" style="height: 120px;"></div>
+            <div class="comparison-label">5 Trillion<br>Pieces floating</div>
+          </div>
+          <div class="comparison-item">
+            <div class="comparison-bar" style="height: 200px;"></div>
+            <div class="comparison-label">1 Million<br>Seabirds killed</div>
+          </div>
+          <div class="comparison-item">
+            <div class="comparison-bar renewable" style="height: 80px;"></div>
+            <div class="comparison-label">9%<br>Actually recycled</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Environmental Facts Infographic -->
+    <div class="infographic-section">
+      <h2 class="infographic-title">🌍 Environmental Facts That Matter</h2>
+      
+      <div class="facts-grid">
+        <div class="fact-card">
+          <span class="fact-icon">🌡️</span>
+          <span class="fact-number">1.1°C</span>
+          <div class="fact-description">Global temperature rise since pre-industrial times</div>
+        </div>
+        
+        <div class="fact-card">
+          <span class="fact-icon">🌊</span>
+          <span class="fact-number">21cm</span>
+          <div class="fact-description">Sea level rise in the last century</div>
+        </div>
+        
+        <div class="fact-card">
+          <span class="fact-icon">🧊</span>
+          <span class="fact-number">13%</span>
+          <div class="fact-description">Arctic sea ice decline per decade</div>
+        </div>
+        
+        <div class="fact-card">
+          <span class="fact-icon">🌳</span>
+          <span class="fact-number">10M</span>
+          <div class="fact-description">Hectares of forest lost annually</div>
+        </div>
+        
+        <div class="fact-card">
+          <span class="fact-icon">🦎</span>
+          <span class="fact-number">1M</span>
+          <div class="fact-description">Species at risk of extinction</div>
+        </div>
+        
+        <div class="fact-card">
+          <span class="fact-icon">💨</span>
+          <span class="fact-number">420ppm</span>
+          <div class="fact-description">Current atmospheric CO₂ concentration</div>
+        </div>
+        
+        <div class="fact-card">
+          <span class="fact-icon">⚡</span>
+          <span class="fact-number">30%</span>
+          <div class="fact-description">Global electricity from renewables</div>
+        </div>
+        
+        <div class="fact-card">
+          <span class="fact-icon">♻️</span>
+          <span class="fact-number">2.01B</span>
+          <div class="fact-description">Tons of municipal waste generated yearly</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carbon Footprint Comparison -->
+    <div class="infographic-section">
+      <h2 class="infographic-title">👥 Daily Carbon Footprint Comparison</h2>
+      
+      <div class="comparison-chart">
+        <div class="comparison-item">
+          <div class="comparison-bar" style="height: 200px;"></div>
+          <div class="comparison-label">Driving 50km<br>12 kg CO₂</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-bar" style="height: 150px;"></div>
+          <div class="comparison-label">Beef meal<br>9 kg CO₂</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-bar" style="height: 120px;"></div>
+          <div class="comparison-label">Flight (1 hour)<br>7 kg CO₂</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-bar renewable" style="height: 60px;"></div>
+          <div class="comparison-label">Vegetarian meal<br>3 kg CO₂</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-bar renewable" style="height: 40px;"></div>
+          <div class="comparison-label">Cycling 50km<br>2 kg CO₂</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-bar renewable" style="height: 20px;"></div>
+          <div class="comparison-label">LED bulb (day)<br>1 kg CO₂</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

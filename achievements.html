@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoQuest | Achievements & Collections</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .achievements-container {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+    }
+    
+    .achievement-categories {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    
+    .category-btn {
+      padding: 8px 16px;
+      border: 2px solid var(--eco-border);
+      border-radius: 20px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    
+    .category-btn.active {
+      background: var(--eco-green);
+      color: white;
+      border-color: var(--eco-green);
+    }
+    
+    .category-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .achievement-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    
+    .achievement-card {
+      background: white;
+      border: 2px solid var(--eco-border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .achievement-card.unlocked {
+      border-color: var(--eco-green);
+      background: linear-gradient(135deg, #f0fdf4, white);
+    }
+    
+    .achievement-card.rare {
+      border-color: #8b5cf6;
+      background: linear-gradient(135deg, #f3e8ff, white);
+    }
+    
+    .achievement-card.legendary {
+      border-color: #f59e0b;
+      background: linear-gradient(135deg, #fef3c7, white);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    
+    .achievement-card.locked {
+      opacity: 0.6;
+      filter: grayscale(50%);
+    }
+    
+    @keyframes glow {
+      from { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+      to { box-shadow: 0 0 30px rgba(245, 158, 11, 0.8); }
+    }
+    
+    .achievement-icon {
+      font-size: 48px;
+      text-align: center;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    
+    .achievement-rarity {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .rarity-common { background: #6b7280; color: white; }
+    .rarity-rare { background: #8b5cf6; color: white; }
+    .rarity-legendary { background: #f59e0b; color: white; }
+    
+    .achievement-title {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    
+    .achievement-description {
+      color: var(--eco-muted);
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    
+    .achievement-progress {
+      margin: 12px 0;
+    }
+    
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: var(--eco-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--eco-green), var(--eco-green-dark));
+      transition: width 0.3s ease;
+    }
+    
+    .achievement-reward {
+      background: var(--eco-sage);
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+    
+    .collection-showcase {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      border: 2px solid var(--eco-border);
+      height: fit-content;
+    }
+    
+    .collection-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: var(--eco-sage);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--eco-green);
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: var(--eco-muted);
+    }
+    
+    .rare-collection {
+      margin: 20px 0;
+    }
+    
+    .collectible-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+    
+    .collectible-item {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--eco-border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .collectible-item.owned {
+      border-color: var(--eco-green);
+      background: var(--eco-sage);
+    }
+    
+    .collectible-item.rare {
+      border-color: #8b5cf6;
+      background: linear-gradient(135deg, #f3e8ff, white);
+    }
+    
+    .collectible-item.legendary {
+      border-color: #f59e0b;
+      background: linear-gradient(135deg, #fef3c7, white);
+      animation: sparkle 3s ease-in-out infinite;
+    }
+    
+    .collectible-item:hover {
+      transform: scale(1.1);
+      z-index: 10;
+    }
+    
+    @keyframes sparkle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .streak-counter {
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      color: white;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin: 16px 0;
+    }
+    
+    .streak-number {
+      font-size: 32px;
+      font-weight: bold;
+    }
+    
+    .daily-challenge {
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      color: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    
+    .challenge-timer {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      margin: 8px 0;
+    }
+    
+    .notification-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border: 3px solid var(--eco-green);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      animation: popIn 0.5s ease;
+    }
+    
+    @keyframes popIn {
+      from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <div class="logo"></div>
+        <div class="title">EcoQuest</div>
+      </a>
+      <div class="nav-links">
+        <a class="btn ghost" href="advanced-leaderboard.html">Leaderboard</a>
+        <a class="btn ghost" href="quiz.html">Quizzes</a>
+        <a class="btn ghost" href="challenges.html">Challenges</a>
+        <a class="btn ghost" href="game.html">Mini Game</a>
+        <a class="btn ghost" href="eco-simulator.html">Eco Simulator</a>
+        <a class="btn ghost" href="achievements.html">Achievements</a>
+        <a class="btn ghost" href="certificate.html">Certificate</a>
+        <div id="authButtons" class="nav-links" style="display:none"></div>
+        <div id="navUser" class="userbar" style="display:none">
+          <img alt="avatar" src=""/>
+          <span></span>
+          <button id="logoutBtn" class="btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:20px;">
+    <div class="achievements-container">
+      <!-- Main Achievements Section -->
+      <div>
+        <h2>🏆 Achievements & Badges</h2>
+        
+        <!-- Category Filter -->
+        <div class="achievement-categories">
+          <button class="category-btn active" data-category="all">All</button>
+          <button class="category-btn" data-category="environmental">🌱 Environmental</button>
+          <button class="category-btn" data-category="learning">🧠 Learning</button>
+          <button class="category-btn" data-category="social">👥 Social</button>
+          <button class="category-btn" data-category="special">⭐ Special</button>
+        </div>
+        
+        <!-- Achievement Grid -->
+        <div class="achievement-grid" id="achievementGrid">
+          <!-- Achievements will be populated by JavaScript -->
+        </div>
+      </div>
+      
+      <!-- Collection Showcase -->
+      <div class="collection-showcase">
+        <h3>📊 Your Collection</h3>
+        
+        <div class="collection-stats">
+          <div class="stat-card">
+            <div class="stat-number" id="totalAchievements">0</div>
+            <div class="stat-label">Achievements</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="totalPoints">0</div>
+            <div class="stat-label">Points</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="rareItems">0</div>
+            <div class="stat-label">Rare Items</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="completionRate">0%</div>
+            <div class="stat-label">Completion</div>
+          </div>
+        </div>
+        
+        <div class="streak-counter">
+          <div>🔥 Daily Streak</div>
+          <div class="streak-number" id="streakCount">7</div>
+          <div>days</div>
+        </div>
+        
+        <div class="daily-challenge">
+          <h4>⚡ Daily Challenge</h4>
+          <div>Complete 3 quiz questions</div>
+          <div class="progress-bar" style="margin: 8px 0;">
+            <div class="progress-fill" style="width: 67%;"></div>
+          </div>
+          <div style="font-size: 12px;">Progress: 2/3</div>
+          <div class="challenge-timer">Resets in 14h 32m</div>
+        </div>
+        
+        <div class="rare-collection">
+          <h4>✨ Rare Collectibles</h4>
+          <div class="collectible-grid" id="collectibleGrid">
+            <!-- Collectibles will be populated by JavaScript -->
+          </div>
+        </div>
+        
+        <button class="btn primary" style="width: 100%; margin-top: 16px;" onclick="openCollectionDetails()">
+          🎁 View Full Collection
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script src="ai-chatbot.js"></script>
+  <script>
+    const user = Eco.requireAuth();
+    
+    // Achievement definitions
+    const achievements = [
+      // Environmental Category
+      {
+        id: 'first_tree',
+        title: 'Tree Hugger',
+        description: 'Plant your first tree in the eco simulator',
+        icon: '🌳',
+        category: 'environmental',
+        rarity: 'common',
+        points: 10,
+        requirement: { type: 'trees_planted', target: 1 },
+        unlocked: false
+      },
+      {
+        id: 'forest_guardian',
+        title: 'Forest Guardian',
+        description: 'Plant 50 trees and create a green paradise',
+        icon: '🌲',
+        category: 'environmental',
+        rarity: 'rare',
+        points: 100,
+        requirement: { type: 'trees_planted', target: 50 },
+        unlocked: false
+      },
+      {
+        id: 'carbon_neutral',
+        title: 'Carbon Neutral Champion',
+        description: 'Achieve zero pollution in your eco city',
+        icon: '🌍',
+        category: 'environmental',
+        rarity: 'legendary',
+        points: 500,
+        requirement: { type: 'zero_pollution', target: 1 },
+        unlocked: false
+      },
+      
+      // Learning Category
+      {
+        id: 'quiz_master',
+        title: 'Quiz Master',
+        description: 'Complete 10 environmental quizzes',
+        icon: '🧠',
+        category: 'learning',
+        rarity: 'common',
+        points: 50,
+        requirement: { type: 'quizzes_completed', target: 10 },
+        unlocked: false
+      },
+      {
+        id: 'perfect_score',
+        title: 'Perfect Scholar',
+        description: 'Get 100% on 5 consecutive quizzes',
+        icon: '💯',
+        category: 'learning',
+        rarity: 'rare',
+        points: 200,
+        requirement: { type: 'perfect_streak', target: 5 },
+        unlocked: false
+      },
+      {
+        id: 'knowledge_seeker',
+        title: 'Knowledge Seeker',
+        description: 'Complete all available learning modules',
+        icon: '📚',
+        category: 'learning',
+        rarity: 'legendary',
+        points: 300,
+        requirement: { type: 'modules_completed', target: 20 },
+        unlocked: false
+      },
+      
+      // Social Category
+      {
+        id: 'team_player',
+        title: 'Team Player',
+        description: 'Complete 5 group challenges',
+        icon: '👥',
+        category: 'social',
+        rarity: 'common',
+        points: 75,
+        requirement: { type: 'group_challenges', target: 5 },
+        unlocked: false
+      },
+      {
+        id: 'community_leader',
+        title: 'Community Leader',
+        description: 'Help 10 other students with challenges',
+        icon: '🤝',
+        category: 'social',
+        rarity: 'rare',
+        points: 150,
+        requirement: { type: 'helped_students', target: 10 },
+        unlocked: false
+      },
+      {
+        id: 'global_ambassador',
+        title: 'Global Ambassador',
+        description: 'Represent your school in international competition',
+        icon: '🌐',
+        category: 'social',
+        rarity: 'legendary',
+        points: 400,
+        requirement: { type: 'international_rep', target: 1 },
+        unlocked: false
+      },
+      
+      // Special Category
+      {
+        id: 'early_adopter',
+        title: 'Early Adopter',
+        description: 'Join EcoQuest in its first month',
+        icon: '🚀',
+        category: 'special',
+        rarity: 'rare',
+        points: 100,
+        requirement: { type: 'early_join', target: 1 },
+        unlocked: true
+      },
+      {
+        id: 'streak_legend',
+        title: 'Streak Legend',
+        description: 'Maintain a 30-day login streak',
+        icon: '🔥',
+        category: 'special',
+        rarity: 'legendary',
+        points: 250,
+        requirement: { type: 'login_streak', target: 30 },
+        unlocked: false
+      },
+      {
+        id: 'eco_influencer',
+        title: 'Eco Influencer',
+        description: 'Inspire 100 students to join EcoQuest',
+        icon: '⭐',
+        category: 'special',
+        rarity: 'legendary',
+        points: 1000,
+        requirement: { type: 'referrals', target: 100 },
+        unlocked: false
+      }
+    ];
+    
+    // Collectible items
+    const collectibles = [
+      { id: 'golden_leaf', emoji: '🍃', rarity: 'legendary', owned: false },
+      { id: 'crystal_drop', emoji: '💎', rarity: 'rare', owned: true },
+      { id: 'solar_gem', emoji: '☀️', rarity: 'rare', owned: false },
+      { id: 'wind_crystal', emoji: '💨', rarity: 'common', owned: true },
+      { id: 'earth_stone', emoji: '🪨', rarity: 'common', owned: true },
+      { id: 'fire_ember', emoji: '🔥', rarity: 'rare', owned: false },
+      { id: 'ice_shard', emoji: '❄️', rarity: 'common', owned: false },
+      { id: 'rainbow_orb', emoji: '🌈', rarity: 'legendary', owned: false },
+      { id: 'star_dust', emoji: '✨', rarity: 'rare', owned: true },
+      { id: 'moon_pearl', emoji: '🌙', rarity: 'legendary', owned: false },
+      { id: 'thunder_bolt', emoji: '⚡', rarity: 'rare', owned: false },
+      { id: 'nature_heart', emoji: '💚', rarity: 'legendary', owned: true }
+    ];
+    
+    // Simulate user progress (in real app, this would come from user data)
+    const userProgress = {
+      trees_planted: 15,
+      quizzes_completed: 8,
+      group_challenges: 3,
+      login_streak: 7,
+      perfect_streak: 2,
+      modules_completed: 5,
+      helped_students: 2,
+      zero_pollution: 0,
+      early_join: 1,
+      referrals: 5,
+      international_rep: 0
+    };
+    
+    // Update achievements based on user progress
+    achievements.forEach(achievement => {
+      const progress = userProgress[achievement.requirement.type] || 0;
+      const target = achievement.requirement.target;
+      
+      if (progress >= target) {
+        achievement.unlocked = true;
+      }
+      
+      achievement.progress = Math.min(progress, target);
+      achievement.progressPercent = Math.min(100, (progress / target) * 100);
+    });
+    
+    // Category filter functionality
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const category = btn.dataset.category;
+        renderAchievements(category);
+      });
+    });
+    
+    // Render achievements
+    function renderAchievements(category = 'all') {
+      const grid = document.getElementById('achievementGrid');
+      grid.innerHTML = '';
+      
+      const filteredAchievements = category === 'all' 
+        ? achievements 
+        : achievements.filter(a => a.category === category);
+      
+      filteredAchievements.forEach(achievement => {
+        const card = document.createElement('div');
+        card.className = `achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'} ${achievement.rarity}`;
+        
+        const rarityClass = `rarity-${achievement.rarity}`;
+        const raritySymbol = achievement.rarity === 'legendary' ? '👑' : 
+                           achievement.rarity === 'rare' ? '💎' : '⭐';
+        
+        card.innerHTML = `
+          <div class="achievement-icon">
+            ${achievement.icon}
+            <div class="achievement-rarity ${rarityClass}">${raritySymbol}</div>
+          </div>
+          <div class="achievement-title">${achievement.title}</div>
+          <div class="achievement-description">${achievement.description}</div>
+          
+          ${!achievement.unlocked ? `
+            <div class="achievement-progress">
+              <div class="progress-text">
+                <span>Progress</span>
+                <span>${achievement.progress}/${achievement.requirement.target}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${achievement.progressPercent}%"></div>
+              </div>
+            </div>
+          ` : ''}
+          
+          <div class="achievement-reward">
+            ${achievement.unlocked ? '✅ Unlocked' : `🎁 Reward: +${achievement.points} points`}
+          </div>
+        `;
+        
+        if (achievement.unlocked) {
+          card.addEventListener('click', () => {
+            showAchievementPopup(achievement);
+          });
+        }
+        
+        grid.appendChild(card);
+      });
+    }
+    
+    // Render collectibles
+    function renderCollectibles() {
+      const grid = document.getElementById('collectibleGrid');
+      grid.innerHTML = '';
+      
+      collectibles.forEach(collectible => {
+        const item = document.createElement('div');
+        item.className = `collectible-item ${collectible.owned ? 'owned' : ''} ${collectible.rarity}`;
+        item.innerHTML = collectible.owned ? collectible.emoji : '❓';
+        item.title = collectible.owned ? `${collectible.id} (${collectible.rarity})` : 'Locked';
+        
+        if (collectible.owned) {
+          item.addEventListener('click', () => {
+            showCollectiblePopup(collectible);
+          });
+        }
+        
+        grid.appendChild(item);
+      });
+    }
+    
+    // Update collection stats
+    function updateCollectionStats() {
+      const unlockedAchievements = achievements.filter(a => a.unlocked).length;
+      const totalAchievements = achievements.length;
+      const ownedCollectibles = collectibles.filter(c => c.owned).length;
+      const rareItems = collectibles.filter(c => c.owned && (c.rarity === 'rare' || c.rarity === 'legendary')).length;
+      const completionRate = Math.round((unlockedAchievements / totalAchievements) * 100);
+      
+      document.getElementById('totalAchievements').textContent = `${unlockedAchievements}/${totalAchievements}`;
+      document.getElementById('totalPoints').textContent = user ? Eco.formatPoints(user.points || 0) : '0';
+      document.getElementById('rareItems').textContent = rareItems;
+      document.getElementById('completionRate').textContent = completionRate + '%';
+      document.getElementById('streakCount').textContent = userProgress.login_streak;
+    }
+    
+    // Show achievement popup
+    function showAchievementPopup(achievement) {
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay';
+      
+      const popup = document.createElement('div');
+      popup.className = 'notification-popup';
+      popup.innerHTML = `
+        <div style="font-size: 64px; margin-bottom: 16px;">${achievement.icon}</div>
+        <h2>${achievement.title}</h2>
+        <p>${achievement.description}</p>
+        <div style="font-size: 18px; color: var(--eco-green); font-weight: bold; margin: 16px 0;">
+          +${achievement.points} Eco-Points Earned!
+        </div>
+        <button class="btn primary" onclick="closePopup()">Awesome!</button>
+      `;
+      
+      document.body.appendChild(overlay);
+      document.body.appendChild(popup);
+      
+      overlay.addEventListener('click', closePopup);
+    }
+    
+    // Show collectible popup
+    function showCollectiblePopup(collectible) {
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay';
+      
+      const popup = document.createElement('div');
+      popup.className = 'notification-popup';
+      popup.innerHTML = `
+        <div style="font-size: 64px; margin-bottom: 16px;">${collectible.emoji}</div>
+        <h2>${collectible.id.replace('_', ' ').toUpperCase()}</h2>
+        <p>Rarity: <strong>${collectible.rarity.toUpperCase()}</strong></p>
+        <div style="margin: 16px 0;">
+          This rare collectible was earned through your eco-friendly actions!
+        </div>
+        <button class="btn primary" onclick="closePopup()">Cool!</button>
+      `;
+      
+      document.body.appendChild(overlay);
+      document.body.appendChild(popup);
+      
+      overlay.addEventListener('click', closePopup);
+    }
+    
+    // Close popup
+    function closePopup() {
+      document.querySelectorAll('.overlay, .notification-popup').forEach(el => el.remove());
+    }
+    
+    // Open collection details (placeholder)
+    function openCollectionDetails() {
+      alert('🎁 Full collection viewer coming soon! You can view all your rare items, trade with friends, and discover new collectibles!');
+    }
+    
+    // Simulate achievement unlock (for demo)
+    function simulateAchievementUnlock() {
+      const lockedAchievements = achievements.filter(a => !a.unlocked);
+      if (lockedAchievements.length > 0) {
+        const randomAchievement = lockedAchievements[Math.floor(Math.random() * lockedAchievements.length)];
+        randomAchievement.unlocked = true;
+        
+        // Award points to user
+        if (user) {
+          Eco.awardPoints(user, randomAchievement.points, `Achievement: ${randomAchievement.title}`);
+        }
+        
+        showAchievementPopup(randomAchievement);
+        renderAchievements();
+        updateCollectionStats();
+      }
+    }
+    
+    // Initialize
+    renderAchievements();
+    renderCollectibles();
+    updateCollectionStats();
+    
+    // Simulate random achievement unlocks (for demo purposes)
+    setTimeout(() => {
+      if (Math.random() < 0.3) {
+        simulateAchievementUnlock();
+      }
+    }, 3000);
+    
+    // Make functions global for onclick handlers
+    window.closePopup = closePopup;
+    window.openCollectionDetails = openCollectionDetails;
+  </script>
+</body>
+</html>

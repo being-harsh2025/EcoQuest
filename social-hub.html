@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EcoQuest | Social Hub</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .social-container {
+      display: grid;
+      grid-template-columns: 300px 1fr 280px;
+      gap: 20px;
+      height: calc(100vh - 120px);
+    }
+    
+    .friends-panel, .chat-panel {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      border: 2px solid var(--eco-border);
+      overflow-y: auto;
+    }
+    
+    .main-feed {
+      background: white;
+      border-radius: 16px;
+      border: 2px solid var(--eco-border);
+      overflow-y: auto;
+    }
+    
+    .friend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+      border-radius: 8px;
+      margin: 4px 0;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    
+    .friend-item:hover {
+      background: var(--eco-sage);
+    }
+    
+    .friend-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--eco-border);
+    }
+    
+    .friend-info {
+      flex: 1;
+    }
+    
+    .friend-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .friend-status {
+      font-size: 12px;
+      color: var(--eco-muted);
+    }
+    
+    .online-indicator {
+      width: 8px;
+      height: 8px;
+      background: var(--eco-green);
+      border-radius: 50%;
+      margin-left: auto;
+    }
+    
+    .post-card {
+      background: white;
+      border-bottom: 1px solid var(--eco-border);
+      padding: 20px;
+      transition: background 0.3s ease;
+    }
+    
+    .post-card:hover {
+      background: var(--eco-sage);
+    }
+    
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .post-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--eco-border);
+    }
+    
+    .post-info {
+      flex: 1;
+    }
+    
+    .post-author {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    .post-time {
+      font-size: 12px;
+      color: var(--eco-muted);
+    }
+    
+    .post-content {
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+    
+    .post-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin: 12px 0;
+    }
+    
+    .post-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--eco-border);
+    }
+    
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+    
+    .action-btn:hover {
+      background: var(--eco-sage);
+    }
+    
+    .action-btn.liked {
+      background: var(--eco-green);
+      color: white;
+    }
+    
+    .team-card {
+      background: linear-gradient(135deg, var(--eco-green), var(--eco-green-dark));
+      color: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    
+    .team-members {
+      display: flex;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    
+    .team-member {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+    
+    .challenge-invite {
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      color: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    
+    .chat-message {
+      display: flex;
+      gap: 8px;
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 8px;
+    }
+    
+    .chat-message.own {
+      background: var(--eco-green);
+      color: white;
+      margin-left: 20px;
+      flex-direction: row-reverse;
+    }
+    
+    .chat-message.other {
+      background: var(--eco-sage);
+    }
+    
+    .chat-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    
+    .chat-content {
+      flex: 1;
+    }
+    
+    .chat-author {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .chat-text {
+      font-size: 14px;
+    }
+    
+    .chat-input {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid var(--eco-border);
+      background: white;
+    }
+    
+    .chat-input input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--eco-border);
+      border-radius: 20px;
+      outline: none;
+    }
+    
+    .send-btn {
+      padding: 8px 16px;
+      background: var(--eco-green);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <div class="logo"></div>
+        <div class="title">EcoQuest</div>
+      </a>
+      <div class="nav-links">
+        <a class="btn ghost" href="advanced-leaderboard.html">Leaderboard</a>
+        <a class="btn ghost" href="social-hub.html">Social Hub</a>
+        <a class="btn ghost" href="challenges.html">Challenges</a>
+        <a class="btn ghost" href="eco-simulator.html">Eco Simulator</a>
+        <a class="btn ghost" href="achievements.html">Achievements</a>
+        <div id="authButtons" class="nav-links" style="display:none"></div>
+        <div id="navUser" class="userbar" style="display:none">
+          <img alt="avatar" src=""/>
+          <span></span>
+          <button id="logoutBtn" class="btn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:20px;">
+    <div class="social-container">
+      <!-- Friends & Teams Panel -->
+      <div class="friends-panel">
+        <h3>👥 Friends & Teams</h3>
+        
+        <div class="team-card">
+          <h4>🌱 Green Warriors</h4>
+          <div class="team-members" id="teamMembers">
+            <!-- Team members populated by JS -->
+          </div>
+          <button class="btn" style="background: rgba(255,255,255,0.2); color: white; width: 100%;">
+            View Team Progress
+          </button>
+        </div>
+        
+        <h4>🟢 Online Friends</h4>
+        <div id="onlineFriends">
+          <!-- Online friends populated by JS -->
+        </div>
+        
+        <h4>⚫ Offline Friends</h4>
+        <div id="offlineFriends">
+          <!-- Offline friends populated by JS -->
+        </div>
+        
+        <button class="btn primary" style="width: 100%; margin-top: 16px;">
+          ➕ Add Friends
+        </button>
+      </div>
+      
+      <!-- Main Social Feed -->
+      <div class="main-feed">
+        <div style="padding: 20px; border-bottom: 2px solid var(--eco-border);">
+          <h3>🌍 Eco Community Feed</h3>
+          
+          <div class="challenge-invite">
+            <h4>⚡ Team Challenge: Clean Ocean</h4>
+            <p>Join forces to remove 1000 pieces of virtual ocean plastic!</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+              <span>Progress: 347/1000</span>
+              <button class="btn" style="background: rgba(255,255,255,0.2); color: white;">Join Challenge</button>
+            </div>
+          </div>
+        </div>
+        
+        <div id="socialFeed">
+          <!-- Social feed posts populated by JS -->
+        </div>
+      </div>
+      
+      <!-- Live Chat Panel -->
+      <div class="chat-panel">
+        <h3>💬 Live Chat</h3>
+        
+        <div id="chatMessages" style="height: calc(100% - 120px); overflow-y: auto;">
+          <!-- Chat messages populated by JS -->
+        </div>
+        
+        <div class="chat-input">
+          <input type="text" id="messageInput" placeholder="Type a message..." maxlength="200">
+          <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script src="ai-chatbot.js"></script>
+  <script>
+    const user = Eco.requireAuth();
+    
+    // Mock social data
+    const friends = [
+      { name: 'Aarya Sharma', avatar: null, online: true, status: 'Planting trees in simulator' },
+      { name: 'Vihaan Patel', avatar: null, online: true, status: 'Taking eco quiz' },
+      { name: 'Priya Singh', avatar: null, online: false, status: 'Last seen 2h ago' },
+      { name: 'Dev Rao', avatar: null, online: true, status: 'In team challenge' },
+      { name: 'Kiara Dsouza', avatar: null, online: false, status: 'Last seen 1d ago' }
+    ];
+    
+    const posts = [
+      {
+        author: 'Aarya Sharma',
+        avatar: null,
+        time: '2 minutes ago',
+        content: 'Just completed the ocean cleanup challenge! 🌊 Our team removed 50 pieces of plastic. Every small action counts! #EcoWarriors',
+        image: null,
+        likes: 12,
+        comments: 3,
+        liked: false
+      },
+      {
+        author: 'Vihaan Patel',
+        avatar: null,
+        time: '15 minutes ago',
+        content: 'Amazing fact: A single tree can absorb 48 pounds of CO2 per year! 🌳 Let\'s plant more trees in our eco cities!',
+        image: null,
+        likes: 8,
+        comments: 5,
+        liked: true
+      },
+      {
+        author: 'Dev Rao',
+        avatar: null,
+        time: '1 hour ago',
+        content: 'Our school just reached 1000 total eco-points! 🎉 Green Valley College is leading the way in environmental action!',
+        image: null,
+        likes: 25,
+        comments: 12,
+        liked: false
+      }
+    ];
+    
+    const chatMessages = [
+      { author: 'Aarya', avatar: null, text: 'Hey everyone! Ready for today\'s team challenge?', own: false },
+      { author: 'You', avatar: null, text: 'Absolutely! Let\'s clean that virtual ocean! 🌊', own: true },
+      { author: 'Vihaan', avatar: null, text: 'I\'m in! Already collected 15 plastic pieces', own: false },
+      { author: 'Priya', avatar: null, text: 'Great teamwork! We can definitely hit our target 💪', own: false }
+    ];
+    
+    // Populate friends list
+    function populateFriends() {
+      const onlineContainer = document.getElementById('onlineFriends');
+      const offlineContainer = document.getElementById('offlineFriends');
+      
+      onlineContainer.innerHTML = '';
+      offlineContainer.innerHTML = '';
+      
+      friends.forEach(friend => {
+        const friendItem = document.createElement('div');
+        friendItem.className = 'friend-item';
+        friendItem.innerHTML = `
+          <img class="friend-avatar" src="${friend.avatar || Eco.initialsAvatar(friend.name)}" alt="avatar">
+          <div class="friend-info">
+            <div class="friend-name">${friend.name}</div>
+            <div class="friend-status">${friend.status}</div>
+          </div>
+          ${friend.online ? '<div class="online-indicator"></div>' : ''}
+        `;
+        
+        if (friend.online) {
+          onlineContainer.appendChild(friendItem);
+        } else {
+          offlineContainer.appendChild(friendItem);
+        }
+      });
+      
+      // Populate team members
+      const teamContainer = document.getElementById('teamMembers');
+      teamContainer.innerHTML = '';
+      friends.slice(0, 4).forEach(friend => {
+        const memberImg = document.createElement('img');
+        memberImg.className = 'team-member';
+        memberImg.src = friend.avatar || Eco.initialsAvatar(friend.name);
+        memberImg.alt = friend.name;
+        memberImg.title = friend.name;
+        teamContainer.appendChild(memberImg);
+      });
+    }
+    
+    // Populate social feed
+    function populateFeed() {
+      const feedContainer = document.getElementById('socialFeed');
+      feedContainer.innerHTML = '';
+      
+      posts.forEach((post, index) => {
+        const postCard = document.createElement('div');
+        postCard.className = 'post-card';
+        postCard.innerHTML = `
+          <div class="post-header">
+            <img class="post-avatar" src="${post.avatar || Eco.initialsAvatar(post.author)}" alt="avatar">
+            <div class="post-info">
+              <div class="post-author">${post.author}</div>
+              <div class="post-time">${post.time}</div>
+            </div>
+          </div>
+          <div class="post-content">${post.content}</div>
+          ${post.image ? `<img class="post-image" src="${post.image}" alt="post image">` : ''}
+          <div class="post-actions">
+            <button class="action-btn ${post.liked ? 'liked' : ''}" onclick="toggleLike(${index})">
+              ${post.liked ? '❤️' : '🤍'} ${post.likes}
+            </button>
+            <button class="action-btn" onclick="showComments(${index})">
+              💬 ${post.comments}
+            </button>
+            <button class="action-btn">
+              🔄 Share
+            </button>
+          </div>
+        `;
+        
+        feedContainer.appendChild(postCard);
+      });
+    }
+    
+    // Populate chat messages
+    function populateChat() {
+      const chatContainer = document.getElementById('chatMessages');
+      chatContainer.innerHTML = '';
+      
+      chatMessages.forEach(message => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${message.own ? 'own' : 'other'}`;
+        messageDiv.innerHTML = `
+          <img class="chat-avatar" src="${message.avatar || Eco.initialsAvatar(message.author)}" alt="avatar">
+          <div class="chat-content">
+            <div class="chat-author">${message.author}</div>
+            <div class="chat-text">${message.text}</div>
+          </div>
+        `;
+        
+        chatContainer.appendChild(messageDiv);
+      });
+      
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Toggle like on post
+    function toggleLike(postIndex) {
+      posts[postIndex].liked = !posts[postIndex].liked;
+      posts[postIndex].likes += posts[postIndex].liked ? 1 : -1;
+      populateFeed();
+    }
+    
+    // Show comments (placeholder)
+    function showComments(postIndex) {
+      alert('💬 Comments feature coming soon! You\'ll be able to engage in discussions about eco-friendly activities!');
+    }
+    
+    // Send chat message
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      
+      if (message) {
+        chatMessages.push({
+          author: 'You',
+          avatar: user.avatarDataUrl,
+          text: message,
+          own: true
+        });
+        
+        input.value = '';
+        populateChat();
+        
+        // Simulate response after delay
+        setTimeout(() => {
+          const responses = [
+            'Great point! 🌱',
+            'I totally agree! Let\'s do this! 💪',
+            'That\'s so inspiring! 🌟',
+            'Count me in for the next challenge! 🚀',
+            'Amazing work everyone! 🎉'
+          ];
+          
+          const randomFriend = friends[Math.floor(Math.random() * friends.length)];
+          const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+          
+          chatMessages.push({
+            author: randomFriend.name,
+            avatar: null,
+            text: randomResponse,
+            own: false
+          });
+          
+          populateChat();
+        }, 1000 + Math.random() * 3000);
+      }
+    }
+    
+    // Enter key to send message
+    document.getElementById('messageInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+    
+    // Initialize
+    populateFriends();
+    populateFeed();
+    populateChat();
+    
+    // Make functions global
+    window.toggleLike = toggleLike;
+    window.showComments = showComments;
+    window.sendMessage = sendMessage;
+    
+    // Simulate live updates
+    setInterval(() => {
+      // Randomly update online status
+      if (Math.random() < 0.1) {
+        const randomFriend = friends[Math.floor(Math.random() * friends.length)];
+        randomFriend.online = !randomFriend.online;
+        populateFriends();
+      }
+    }, 10000);
+  </script>
+</body>
+</html>
